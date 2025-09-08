@@ -1,0 +1,42 @@
+{{ define "renderComment" }}
+{{ range . }}
+<div class="comment-with-avatar">
+    <div class="comment-avatar">
+        {{ substr .Name 0 1 | upper }}
+    </div>
+    <div class="comment-body">
+        <div class="comment-header">
+            <span class="comment-author">{{ .Name }}</span>
+            <span class="comment-date mx-1">{{ .CreatedAt.Format "2d" }}</span>
+        </div>
+
+        <div class="comment-content">
+            {{ if .ParentName }}
+            <span class="comment-mention">@{{ .ParentName }}</span>
+            {{ end }}
+            {{ .Comment }}
+        </div>
+
+        <div class="comment-actions">
+            <button class="comment-action-btn">Like</button>
+            <button class="comment-action-btn reply-btn" data-comment-id="{{ .ID }}" data-reply-to="{{ .Name }}">Reply</button>
+            <span class="comment-date">{{ .CreatedAt.Format "02.01.2006 15:04" }}</span>
+
+            {{ if .Replies }}
+            <button class="toggle-replies-btn" data-target="replies-{{ .ID }}">
+                {{ len .Replies }} replies
+            </button>
+            {{ end }}
+        </div>
+
+        {{ if .Replies }}
+        <div id="replies-{{ .ID }}" class="replies-container" style="display: none;">
+            <div class="reply-comment">
+                {{ template "renderComment" .Replies }}
+            </div>
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
+{{ end }}

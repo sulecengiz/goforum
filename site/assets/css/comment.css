@@ -1,0 +1,269 @@
+/* Ana yorum container */
+.comment-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Her bir yorum kartı */
+.comment-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+/* Yorum header (isim ve tarih) */
+.comment-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #1a1a1a;
+    font-size: 14px;
+}
+
+.comment-date {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* Yorum içeriği */
+.comment-content {
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+/* Mention styling */
+.comment-mention {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+/* Yorum aksiyonları (Like, Reply) */
+.comment-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.comment-action-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.comment-action-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* Alt yorumlar container */
+.replies-container {
+    margin-top: 16px;
+    position: relative;
+}
+
+/* Threading line - sol kenardaki çizgi */
+.replies-container::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 16px;
+    width: 2px;
+    background: #d1d5db;
+    border-radius: 1px;
+}
+
+/* Her seviye için indent */
+.reply-comment {
+    margin-left: 40px;
+    position: relative;
+}
+
+/* Horizontal connector line */
+.reply-comment::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 20px;
+    width: 20px;
+    height: 2px;
+    background: #d1d5db;
+    border-radius: 1px;
+}
+
+/* Avatar placeholder */
+.comment-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 0%, rgba(113, 97, 91, 0.86) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+/* Comment with avatar layout */
+.comment-with-avatar {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.comment-body {
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+/* Toggle replies button */
+.toggle-replies-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.toggle-replies-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reply-comment {
+        margin-left: 24px;
+    }
+
+    .reply-comment::before {
+        left: -12px;
+        width: 12px;
+    }
+
+    .replies-container::before {
+        left: 12px;
+    }
+
+    .comment-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+        margin-right: 8px;
+    }
+}
+
+/* Yorum form container */
+.comment-form-container {
+    max-width: 800px;
+    margin: 32px auto 0 auto;
+}
+
+/* Form kartı */
+.comment-form-container .card {
+    border-radius: 12px;
+    padding: 20px;
+    background: rgba(221, 216, 203, 0.86);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e5e7eb;
+}
+
+/* Form başlığı */
+.comment-form-container h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+}
+
+/* Input ve textarea stilleri */
+.comment-form-container input[type="text"],
+.comment-form-container textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: rgb(26, 26, 26);
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.comment-form-container input[type="text"]:focus,
+.comment-form-container textarea:focus {
+    outline: none;
+    border-color:rgba(221, 216, 203, 0.86);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.11);
+}
+
+/* Placeholder renk ve italik */
+.comment-form-container input::placeholder,
+.comment-form-container textarea::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* Gönder ve iptal butonları */
+.comment-form-container button {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.comment-form-container button[type="submit"] {
+    background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 0%, rgba(113, 97, 91, 0.86) 100%);
+    color: #ffffff;
+    border: none;
+}
+
+.comment-form-container button[type="submit"]:hover {
+    background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 100%, rgba(113, 97, 91, 0.86) 0%);
+}
+
+#cancel-reply {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#cancel-reply:hover {
+    text-decoration: underline;
+    color: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comment-form-container {
+        padding: 0 16px;
+    }
+}

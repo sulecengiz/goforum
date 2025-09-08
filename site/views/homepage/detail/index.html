@@ -1,0 +1,14 @@
+{{ define "index" }}
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="/assets/css/comment.css">
+{{ template "head" }}
+    <body>
+{{ template "navbar" }}
+{{ template "content" . }}
+        <hr />
+{{ template "footer" }}
+       {{ template "scripts" }}
+    </body>
+</html>
+{{ end }}

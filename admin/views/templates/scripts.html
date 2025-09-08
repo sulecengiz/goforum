@@ -1,0 +1,46 @@
+{{define "scripts"}}
+<!-- Bootstrap core JavaScript-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js" integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/admin/assets/vendor/jquery/jquery.min.js"></script>
+<script src="/admin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="/admin/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="/admin/assets/js/sb-admin-2.min.js"></script>
+<script src="/admin/assets/js/iziToast.js"></script>
+<script src="/admin/assets/js/iziToast.min.js"></script>
+
+<script src="/admin/assets/summernote/summernote-bs4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            placeholder: 'İçeriğini buraya girin...',
+            tabsize: 2,
+            height: 500,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'hr']],
+                ['view', ['fullscreen', 'codeview']],
+                ['help', ['help']]
+            ]
+
+        });
+        const alertElement = document.getElementById('alertMessage');
+        if (alertElement) {
+            setTimeout(function() {
+                alertElement.style.display = 'none';
+            }, 2000);
+        }
+    });
+</script>
+{{end}}

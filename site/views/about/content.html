@@ -1,0 +1,28 @@
+{{ define "content" }}
+<header class="masthead" style="background-image: url('/assets/assets/img/about-bg.jpeg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>About Us</h1>
+                    <span class="subheading">GoLang Blog</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-preview">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelector(".post-preview").innerHTML = "{{ .About.Content }}"
+</script>
+{{ end }}
