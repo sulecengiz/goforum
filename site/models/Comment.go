@@ -112,3 +112,55 @@ func (c *Comment) AddComment() error {
 	result := db.Create(c)
 	return result.Error
 }
+
+func (c Comment) GetAll() interface{} {
+	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
+	if err != nil {
+		fmt.Println("Veritabanı bağlantısı kurulamadı:", err)
+		return nil
+	}
+
+	var comments []Comment
+	result := db.Order("created_at desc").Find(&comments)
+	if result.Error != nil {
+		fmt.Println("Yorumlar alınırken hata oluştu:", result.Error)
+		return nil
+	}
+	return comments
+}
+func (c *Comment) Delete() error {
+	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
+	if err != nil {
+		return err
+	}
+
+	// Önce bu yoruma bağlı reply'leri bul
+	var replies []Comment
+	if err := db.Where("parent_id = ?", c.ID).Find(&replies).Error; err != nil {
+		return err
+	}
+
+	// Her reply için recursive delete
+	for _, reply := range replies {
+		if err := reply.Delete(); err != nil {
+			return err
+		}
+	}
+
+	// Son olarak kendisini sil
+	if err := db.Delete(&Comment{}, c.ID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c Comment) Get(id string) (Comment, error) {
+	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
+	if err != nil {
+		return Comment{}, err
+	}
+	var comment Comment
+	result := db.First(&comment, id)
+	return comment, result.Error
+}

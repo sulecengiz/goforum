@@ -250,15 +250,15 @@
 #cancel-reply {
     background: none;
     border: none;
-    color: #ef4444;
+    background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 0%, rgba(113, 97, 91, 0.86) 100%);
+    color: #ffffff;
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 #cancel-reply:hover {
-    text-decoration: underline;
-    color: #b91c1c;
+    background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 100%, rgba(113, 97, 91, 0.86) 0%);
 }
 
 /* Responsive */
@@ -266,4 +266,17 @@
     .comment-form-container {
         padding: 0 16px;
     }
+}
+.comment-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+
+}
+.like-btn:hover {
+    color: #b3005b;  /* Fare üzerine gelince renk */
+}
+/* Beğenilmiş ikonun stilini belirlemek için */
+.like-btn {
+    color: #ff0080; /* Beğenildiğinde kırmızı */
 }

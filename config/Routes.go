@@ -39,6 +39,12 @@ func Routes() *httprouter.Router {
 	r.GET("/admin/about", admin.AboutIndex)
 	r.POST("/admin/about", admin.AboutUpdate)
 
+	r.GET("/admin/comment/comments/:id", admin.Comment{}.PostComment)
+	r.GET("/admin/comment/posts", admin.Comment{}.Posts)
+	r.GET("/admin/comment/delete/:id", admin.Comment{}.Delete)
+
+	// Statik dosyalar için yönlendirme
+
 	r.ServeFiles("/admin/assets/*filepath", http.Dir("admin/assets"))
 	r.ServeFiles("/uploads/*filepath", http.Dir("uploads"))
 	r.ServeFiles("/assets/*filepath", http.Dir("site/assets"))

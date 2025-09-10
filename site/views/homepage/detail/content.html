@@ -22,16 +22,7 @@
 
                 <!-- Yorumlar -->
                 <div class="comments-section">
-                    <h3 class="mb-4">Yorumlar ({{ len .Comments }})</h3>
-
-                    <!-- Yorum Listesi -->
-                    <div class="comment-list">
-                        {{ if .Comments }}
-                        {{ template "renderComment" .Comments }}
-                        {{ else }}
-                        <div class="alert alert-info">Henüz yorum yapılmamış. İlk yorumu siz yapın!</div>
-                        {{ end }}
-                    </div>
+                    <h3 class="mb-4">Yorumlar ({{ .TotalComments }})</h3>
 
                     <!-- Yorum Formu -->
                     <div class="comment-form-container mt-5">
@@ -57,6 +48,14 @@
                                 </form>
                             </div>
                         </div>
+                    </div>
+                    <!-- Yorum Listesi -->
+                    <div class="comment-list">
+                        {{ if .Comments }}
+                        {{ template "renderComment" .Comments }}
+                        {{ else }}
+                        <div class="alert" style="background-color: rgba(193,164,125,0.25); color: #49391e">Henüz yorum yapılmamış. İlk yorumu siz yapın!</div>
+                        {{ end }}
                     </div>
                 </div> <!-- comments-section -->
             </div>
@@ -119,6 +118,153 @@
             cancelReplyBtn.style.display = 'none';
             commentTextarea.focus();
         });
+
+        // --- BEĞENİ BUTONU KODU İÇİN DEĞİŞİKLİKLER ---
+
+            const LIKED_COMMENTS_KEY = 'likedComments';
+
+            // 1. Sayfa yüklendiğinde mevcut beğeni durumunu kontrol et
+            function checkInitialLikeStatus() {
+                try {
+                    // localStorage'dan beğeni verilerini al, yoksa boş bir nesne oluştur
+                    const likedComments = JSON.parse(localStorage.getItem(LIKED_COMMENTS_KEY)) || {};
+
+                    // Tüm beğeni butonlarını seç (dinamik içerik için her seferinde yeniden seç)
+                    const likeButtons = document.querySelectorAll('.like-btn');
+                    console.log('Bulunan buton sayısı:', likeButtons.length);
+
+                    // Her bir beğeni butonu için
+                    likeButtons.forEach(button => {
+                        const commentId = button.getAttribute('data-comment-id');
+                        const icon = button.querySelector('.like-icon');
+
+                        if (!commentId || !icon) {
+                            console.warn('Eksik data-comment-id veya like-icon:', button);
+                            return;
+                        }
+
+                        // Eğer yorumun ID'si localStorage'da varsa, dolu kalp yap
+                        if (likedComments[commentId]) {
+                            icon.classList.remove('far', 'fa-heart');
+                            icon.classList.add('fas', 'fa-heart');
+                        } else {
+                            // Değilse boş kalp yap
+                            icon.classList.remove('fas', 'fa-heart');
+                            icon.classList.add('far', 'fa-heart');
+                        }
+                    });
+
+                    console.log('Yüklenen beğeniler:', likedComments);
+                } catch (error) {
+                    console.error('checkInitialLikeStatus hatası:', error);
+                }
+            }
+
+            // 2. Beğenme/Beğenmeme işlemini yöneten ana fonksiyon
+            function handleLike(event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                try {
+                    const button = this;
+                    const commentId = button.getAttribute('data-comment-id');
+                    const icon = button.querySelector('.like-icon');
+
+                    if (!commentId || !icon) {
+                        console.error('Eksik data-comment-id veya like-icon');
+                        return;
+                    }
+
+                    // localStorage'dan mevcut beğeni durumunu al
+                    let likedComments = JSON.parse(localStorage.getItem(LIKED_COMMENTS_KEY)) || {};
+
+                    if (likedComments[commentId]) {
+                        // Eğer daha önce beğenilmişse, beğeniyi kaldır
+                        delete likedComments[commentId];
+                        icon.classList.remove('fas', 'fa-heart');
+                        icon.classList.add('far', 'fa-heart');
+                        console.log('Beğeni kaldırıldı:', commentId);
+                    } else {
+                        // Beğenilmemişse, beğen
+                        likedComments[commentId] = true;
+                        icon.classList.remove('far', 'fa-heart');
+                        icon.classList.add('fas', 'fa-heart');
+                        console.log('Beğenildi:', commentId);
+                    }
+
+                    // Değişikliği localStorage'a geri kaydet
+                    localStorage.setItem(LIKED_COMMENTS_KEY, JSON.stringify(likedComments));
+
+                } catch (error) {
+                    console.error('handleLike hatası:', error);
+                }
+            }
+
+            // 3. Event listener'ları ekle (event delegation kullanarak)
+            function attachLikeListeners() {
+                // Mevcut listener'ları kaldır
+                document.removeEventListener('click', handleLikeClick);
+
+                // Yeni listener ekle (event delegation)
+                document.addEventListener('click', handleLikeClick);
+            }
+
+            // Event delegation handler
+            function handleLikeClick(event) {
+                if (event.target.closest('.like-btn')) {
+                    const button = event.target.closest('.like-btn');
+                    handleLike.call(button, event);
+                }
+            }
+
+            // 4. Sayfa yükleme ve dinamik içerik için
+            function initializeLikeSystem() {
+                attachLikeListeners();
+
+                // Kısa bir gecikme ile kontrol et (DOM güncellemeleri için)
+                setTimeout(() => {
+                    checkInitialLikeStatus();
+                }, 100);
+            }
+
+            // 5. MutationObserver - dinamik içerik değişikliklerini izle
+            const observer = new MutationObserver(function(mutations) {
+                let shouldCheck = false;
+
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        // Yeni node'lar eklendi, beğeni butonları var mı kontrol et
+                        for (let node of mutation.addedNodes) {
+                            if (node.nodeType === 1) { // Element node
+                                if (node.querySelector && node.querySelector('.like-btn')) {
+                                    shouldCheck = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                });
+
+                if (shouldCheck) {
+                    setTimeout(checkInitialLikeStatus, 50);
+                }
+            });
+
+            // Observer'ı başlat
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            // İlk başlatma
+            initializeLikeSystem();
+
+            // Manuel olarak yeniden kontrol etme fonksiyonu (gerekirse)
+            window.refreshLikeStatus = checkInitialLikeStatus;
+
+            console.log('Beğeni sistemi başlatıldı');
+
     });
+
 </script>
 {{ end }}

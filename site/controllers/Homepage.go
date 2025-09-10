@@ -34,6 +34,15 @@ func (homepage Homepage) Index(w http.ResponseWriter, r *http.Request, params ht
 	view.ExecuteTemplate(w, "index", data)
 }
 
+// tüm yorumları (root + replies) sayan recursive fonksiyon
+func countComments(comments []*models.Comment) int {
+	total := len(comments)
+	for _, c := range comments {
+		total += countComments(c.Replies)
+	}
+	return total
+}
+
 func (homepage Homepage) Detail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	slug := params.ByName("slug")
 	post := models.Post{}.Get("slug = ?", slug)
@@ -85,8 +94,9 @@ func (homepage Homepage) Detail(w http.ResponseWriter, r *http.Request, params h
 	}
 
 	data := map[string]interface{}{
-		"Post":     post,
-		"Comments": rootComments,
+		"Post":          post,
+		"Comments":      rootComments,
+		"TotalComments": countComments(rootComments),
 	}
 
 	err = view.ExecuteTemplate(w, "index", data)

@@ -1,5 +1,15 @@
 {{ define "renderComment" }}
 {{ range . }}
+<style>
+    .comment-content{
+        word-break: break-word;
+    }
+    .comment-mention {
+        font-weight: bold;
+        color: #007bff;
+        margin-right: 5px;
+    }
+</style>
 <div class="comment-with-avatar">
     <div class="comment-avatar">
         {{ substr .Name 0 1 | upper }}
@@ -7,7 +17,6 @@
     <div class="comment-body">
         <div class="comment-header">
             <span class="comment-author">{{ .Name }}</span>
-            <span class="comment-date mx-1">{{ .CreatedAt.Format "2d" }}</span>
         </div>
 
         <div class="comment-content">
@@ -18,8 +27,12 @@
         </div>
 
         <div class="comment-actions">
-            <button class="comment-action-btn">Like</button>
-            <button class="comment-action-btn reply-btn" data-comment-id="{{ .ID }}" data-reply-to="{{ .Name }}">Reply</button>
+            <!-- Her yorum için (template içinde tekrar eden kısım) -->
+            <button class="comment-action-btn like-btn me-2" data-comment-id="{{ .ID }}">
+                <i class="far fa-heart like-icon" id="like-icon-{{ .ID }}"></i>
+            </button>
+
+            <button class="comment-action-btn reply-btn" data-comment-id="{{ .ID }}" data-reply-to="{{ .Name }}"><i class="fas fa-reply"></i></button>
             <span class="comment-date">{{ .CreatedAt.Format "02.01.2006 15:04" }}</span>
 
             {{ if .Replies }}
