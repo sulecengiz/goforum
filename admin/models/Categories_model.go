@@ -1,74 +1,22 @@
 package models
 
-import (
-	"fmt"
+import "gorm.io/gorm"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-)
-
+// Category admin tarafı modeli
 type Category struct {
 	gorm.Model
-	Title, Slug string
+	Title string
+	Slug  string
 }
 
-func (p Category) Migrate() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.AutoMigrate(&p)
+func (c Category) Migrate()                          { GetDB().AutoMigrate(&c) }
+func (c Category) Add()                              { GetDB().Create(&c) }
+func (c Category) Get(where ...interface{}) Category { GetDB().First(&c, where...); return c }
+func (c Category) GetAll(where ...interface{}) []Category {
+	var list []Category
+	GetDB().Find(&list, where...)
+	return list
 }
-
-func (p Category) Add() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Create(&p)
-}
-func (p Category) Get(where ...interface{}) Category {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return p
-	}
-	db.First(&p, where...)
-	return p
-}
-func (p Category) GetAll(where ...interface{}) []Category {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return nil
-	}
-	var Categories []Category
-	db.Find(&Categories, where...)
-	return Categories
-}
-func (p Category) Update(column string, value interface{}) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Update(column, value)
-}
-func (p Category) Updates(data Category) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Updates(data)
-}
-func (p Category) Delete() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Delete(&p, p.ID)
-}
+func (c Category) Update(column string, value interface{}) { GetDB().Model(&c).Update(column, value) }
+func (c Category) Updates(data Category)                   { GetDB().Model(&c).Updates(data) }
+func (c Category) Delete()                                 { GetDB().Delete(&c, c.ID) }

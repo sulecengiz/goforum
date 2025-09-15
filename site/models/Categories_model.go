@@ -1,74 +1,28 @@
 package models
 
 import (
-	"fmt"
-
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type Category struct {
 	gorm.Model
+	ID          uint `gorm:"primaryKey;autoIncrement:false"`
 	Title, Slug string
 }
 
-func (p Category) Migrate() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.AutoMigrate(&p)
-}
-
-func (p Category) Add() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Create(&p)
-}
-func (p Category) Get(where ...interface{}) Category {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return p
-	}
-	db.First(&p, where...)
-	return p
-}
+func (p Category) Migrate()                          { GetDB().AutoMigrate(&p) }
+func (p Category) Add()                              { GetDB().Create(&p) }
+func (p Category) Get(where ...interface{}) Category { GetDB().First(&p, where...); return p }
 func (p Category) GetAll(where ...interface{}) []Category {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return nil
-	}
-	var Categories []Category
-	db.Find(&Categories, where...)
-	return Categories
+	var categories []Category
+	GetDB().Find(&categories, where...)
+	return categories
 }
-func (p Category) Update(column string, value interface{}) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Update(column, value)
-}
-func (p Category) Updates(data Category) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Updates(data)
-}
-func (p Category) Delete() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Delete(&p, p.ID)
+func (p Category) Update(column string, value interface{}) { GetDB().Model(&p).Update(column, value) }
+func (p Category) Updates(data Category)                   { GetDB().Model(&p).Updates(data) }
+func (p Category) Delete()                                 { GetDB().Delete(&p, p.ID) }
+func (Category) GetBySlug(slug string) Category {
+	var c Category
+	GetDB().Where("slug = ?", slug).First(&c)
+	return c
 }

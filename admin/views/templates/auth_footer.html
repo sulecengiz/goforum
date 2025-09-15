@@ -1,0 +1,23 @@
+{{ define "auth_footer" }}
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>Copyright &copy; GoBlog <span id="year"></span></span>
+            </div>
+        </div>
+    </footer>
+    <!-- End of Footer -->
+
+    <!-- Bootstrap core JavaScript-->
+<script src="/admin/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/admin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/admin/assets/js/sb-admin-2.min.js"></script>
+</body>
+<script>
+    let d = new Date()
+    document.getElementById("year").innerHTML = d.getFullYear()
+</script>
+</html>
+{{ end }}

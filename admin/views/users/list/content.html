@@ -1,0 +1,31 @@
+{{ define "content" }}
+
+<h1>Kullanıcılar</h1>
+<hr>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Kullanıcı Adı</th>
+        <th>E-posta</th>
+        <th>Rol</th>
+        <th>Bekleyen Onaysız Post</th>
+        <th>İşlemler</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ range $i,$u := .Users }}
+        <tr>
+            <td>{{ $u.ID }}</td>
+            <td>{{ $u.Username }}</td>
+            <td>{{ $u.Email }}</td>
+            <td>{{ if eq $u.Role 1 }}Admin{{ else }}Kullanıcı{{ end }}</td>
+            <td>{{ pendingCount $u.ID }}</td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary" href="/admin/user/{{ $u.ID }}/posts">Postlar</a>
+            </td>
+        </tr>
+    {{ end }}
+    </tbody>
+</table>
+{{ end }}

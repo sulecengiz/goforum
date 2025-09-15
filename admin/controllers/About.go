@@ -3,8 +3,8 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/admin/helpers"
-	"goblog/site/models"
+	"goforum/admin/helpers"
+	"goforum/site/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,7 +13,9 @@ import (
 )
 
 func AboutIndex(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 	about, err := models.About{}.Get()

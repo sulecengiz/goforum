@@ -26,17 +26,18 @@
 
                     <!-- Yorum Formu -->
                     <div class="comment-form-container mt-5">
+                        {{ if .User }}
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title mb-4" id="form-title">Yorum Yap</h4>
                                 <form id="comment-form" action="/yazilar/{{ .Post.Slug }}/yorum-ekle" method="POST">
                                     <input type="hidden" name="parent_id" id="parent-id-input">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Adınız</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
+
+                                        <input type="text" class="form-control" id="name" name="name" value="{{ .User.Username }}" readonly>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="comment" class="form-label">Yorumunuz</label>
+                                        <label for="comment" class="form-label" style="font-size: smaller">Yorumunuz</label>
                                         <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
@@ -48,6 +49,11 @@
                                 </form>
                             </div>
                         </div>
+                        {{ else }}
+                        <div class="alert" style="background-color: rgba(138,109,59,0.83)">
+                            Yorum yapabilmek için lütfen <a href="/login">giriş yapın</a> veya <a href="/register">kayıt olun</a>.
+                        </div>
+                        {{ end }}
                     </div>
                     <!-- Yorum Listesi -->
                     <div class="comment-list">
@@ -62,9 +68,29 @@
         </div>
     </div>
 </article>
-
+<!-- Yukarı Çık Butonu -->
+<button id="back-to-top" class="btn btn-primary"
+        style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 999; border-radius: 40%; background-color: #8a6d3b; border-color: #8a6d3b;">
+    <i class="fas fa-arrow-up"></i>
+</button>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const backToTopBtn = document.getElementById("back-to-top");
+
+        // Scroll eventini dinle
+        window.addEventListener("scroll", function() {
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = "block"; // göster
+            } else {
+                backToTopBtn.style.display = "none";  // gizle
+            }
+        });
+
+        // Butona tıklayınca yukarıya kaydır
+        backToTopBtn.addEventListener("click", function() {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
         // Blog içeriğini set et
         const blogContent = document.getElementById("blog-content");
         if (blogContent) {
@@ -73,197 +99,61 @@
 
         // Alt yorumları göster/gizle butonları
         document.querySelectorAll('.toggle-replies-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const targetId = this.getAttribute('data-target');
-                const targetDiv = document.getElementById(targetId);
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    if (!targetDiv) return;
 
-                if (!targetDiv) return;
-
-                if (targetDiv.style.display === 'none' || targetDiv.style.display === '') {
-                    targetDiv.style.display = 'block';
-                    this.textContent = this.textContent.replace('Göster', 'Gizle');
-                } else {
-                    targetDiv.style.display = 'none';
-                    this.textContent = this.textContent.replace('Gizle', 'Göster');
-                }
-            });
-        });
-
-        // Yanıtla butonları
-        const commentForm = document.getElementById('comment-form');
-        const parentIdInput = document.getElementById('parent-id-input');
-        const commentTextarea = document.getElementById('comment');
-        const formTitle = document.getElementById('form-title');
-        const cancelReplyBtn = document.getElementById('cancel-reply');
-
-        document.querySelectorAll('.reply-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const commentId = this.getAttribute('data-comment-id');
-                const replyTo = this.getAttribute('data-reply-to');
-
-                parentIdInput.value = commentId;
-                commentTextarea.placeholder = `@${replyTo} kullanıcısına yanıtınızı yazın...`;
-                formTitle.textContent = `@${replyTo} kullanıcısına yanıt yazıyorsunuz`;
-                cancelReplyBtn.style.display = 'inline-block';
-
-                commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                commentTextarea.focus();
-            });
-        });
-
-        cancelReplyBtn.addEventListener('click', function() {
-            parentIdInput.value = '';
-            commentTextarea.placeholder = 'Yorumunuzu yazın...';
-            formTitle.textContent = 'Yorum Yap';
-            cancelReplyBtn.style.display = 'none';
-            commentTextarea.focus();
-        });
-
-        // --- BEĞENİ BUTONU KODU İÇİN DEĞİŞİKLİKLER ---
-
-            const LIKED_COMMENTS_KEY = 'likedComments';
-
-            // 1. Sayfa yüklendiğinde mevcut beğeni durumunu kontrol et
-            function checkInitialLikeStatus() {
-                try {
-                    // localStorage'dan beğeni verilerini al, yoksa boş bir nesne oluştur
-                    const likedComments = JSON.parse(localStorage.getItem(LIKED_COMMENTS_KEY)) || {};
-
-                    // Tüm beğeni butonlarını seç (dinamik içerik için her seferinde yeniden seç)
-                    const likeButtons = document.querySelectorAll('.like-btn');
-                    console.log('Bulunan buton sayısı:', likeButtons.length);
-
-                    // Her bir beğeni butonu için
-                    likeButtons.forEach(button => {
-                        const commentId = button.getAttribute('data-comment-id');
-                        const icon = button.querySelector('.like-icon');
-
-                        if (!commentId || !icon) {
-                            console.warn('Eksik data-comment-id veya like-icon:', button);
-                            return;
-                        }
-
-                        // Eğer yorumun ID'si localStorage'da varsa, dolu kalp yap
-                        if (likedComments[commentId]) {
-                            icon.classList.remove('far', 'fa-heart');
-                            icon.classList.add('fas', 'fa-heart');
-                        } else {
-                            // Değilse boş kalp yap
-                            icon.classList.remove('fas', 'fa-heart');
-                            icon.classList.add('far', 'fa-heart');
-                        }
-                    });
-
-                    console.log('Yüklenen beğeniler:', likedComments);
-                } catch (error) {
-                    console.error('checkInitialLikeStatus hatası:', error);
-                }
-            }
-
-            // 2. Beğenme/Beğenmeme işlemini yöneten ana fonksiyon
-            function handleLike(event) {
-                event.preventDefault();
-                event.stopPropagation();
-
-                try {
-                    const button = this;
-                    const commentId = button.getAttribute('data-comment-id');
-                    const icon = button.querySelector('.like-icon');
-
-                    if (!commentId || !icon) {
-                        console.error('Eksik data-comment-id veya like-icon');
-                        return;
-                    }
-
-                    // localStorage'dan mevcut beğeni durumunu al
-                    let likedComments = JSON.parse(localStorage.getItem(LIKED_COMMENTS_KEY)) || {};
-
-                    if (likedComments[commentId]) {
-                        // Eğer daha önce beğenilmişse, beğeniyi kaldır
-                        delete likedComments[commentId];
-                        icon.classList.remove('fas', 'fa-heart');
-                        icon.classList.add('far', 'fa-heart');
-                        console.log('Beğeni kaldırıldı:', commentId);
+                    if (targetDiv.style.display === 'none' || targetDiv.style.display === '') {
+                        targetDiv.style.display = 'block';
+                        this.textContent = this.textContent.replace('Göster', 'Gizle');
                     } else {
-                        // Beğenilmemişse, beğen
-                        likedComments[commentId] = true;
-                        icon.classList.remove('far', 'fa-heart');
-                        icon.classList.add('fas', 'fa-heart');
-                        console.log('Beğenildi:', commentId);
-                    }
-
-                    // Değişikliği localStorage'a geri kaydet
-                    localStorage.setItem(LIKED_COMMENTS_KEY, JSON.stringify(likedComments));
-
-                } catch (error) {
-                    console.error('handleLike hatası:', error);
-                }
-            }
-
-            // 3. Event listener'ları ekle (event delegation kullanarak)
-            function attachLikeListeners() {
-                // Mevcut listener'ları kaldır
-                document.removeEventListener('click', handleLikeClick);
-
-                // Yeni listener ekle (event delegation)
-                document.addEventListener('click', handleLikeClick);
-            }
-
-            // Event delegation handler
-            function handleLikeClick(event) {
-                if (event.target.closest('.like-btn')) {
-                    const button = event.target.closest('.like-btn');
-                    handleLike.call(button, event);
-                }
-            }
-
-            // 4. Sayfa yükleme ve dinamik içerik için
-            function initializeLikeSystem() {
-                attachLikeListeners();
-
-                // Kısa bir gecikme ile kontrol et (DOM güncellemeleri için)
-                setTimeout(() => {
-                    checkInitialLikeStatus();
-                }, 100);
-            }
-
-            // 5. MutationObserver - dinamik içerik değişikliklerini izle
-            const observer = new MutationObserver(function(mutations) {
-                let shouldCheck = false;
-
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-                        // Yeni node'lar eklendi, beğeni butonları var mı kontrol et
-                        for (let node of mutation.addedNodes) {
-                            if (node.nodeType === 1) { // Element node
-                                if (node.querySelector && node.querySelector('.like-btn')) {
-                                    shouldCheck = true;
-                                    break;
-                                }
-                            }
-                        }
+                        targetDiv.style.display = 'none';
+                        this.textContent = this.textContent.replace('Gizle', 'Göster');
                     }
                 });
+            }
+        });
 
-                if (shouldCheck) {
-                    setTimeout(checkInitialLikeStatus, 50);
+        // Yorum formu elementlerini kontrol et
+        const commentForm = document.getElementById('comment-form');
+        if (commentForm) {
+            const parentIdInput = document.getElementById('parent-id-input');
+            const commentTextarea = document.getElementById('comment');
+            const formTitle = document.getElementById('form-title');
+            const cancelReplyBtn = document.getElementById('cancel-reply');
+
+            // Yanıtla butonları
+            document.querySelectorAll('.reply-btn').forEach(button => {
+                if (button) {
+                    button.addEventListener('click', function() {
+                        const commentId = this.getAttribute('data-comment-id');
+                        const replyTo = this.getAttribute('data-reply-to');
+
+                        if (parentIdInput) parentIdInput.value = commentId;
+                        if (commentTextarea) commentTextarea.placeholder = `@${replyTo} kullanıcısına yanıtınızı yazın...`;
+                        if (formTitle) formTitle.textContent = `@${replyTo} kullanıcısına yanıt yazıyorsunuz`;
+                        if (cancelReplyBtn) cancelReplyBtn.style.display = 'inline-block';
+
+                        commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        if (commentTextarea) commentTextarea.focus();
+                    });
                 }
             });
 
-            // Observer'ı başlat
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-
-            // İlk başlatma
-            initializeLikeSystem();
-
-            // Manuel olarak yeniden kontrol etme fonksiyonu (gerekirse)
-            window.refreshLikeStatus = checkInitialLikeStatus;
-
-            console.log('Beğeni sistemi başlatıldı');
-
+            if (cancelReplyBtn) {
+                cancelReplyBtn.addEventListener('click', function() {
+                    if (parentIdInput) parentIdInput.value = '';
+                    if (commentTextarea) {
+                        commentTextarea.placeholder = 'Yorumunuzu yazın...';
+                        commentTextarea.focus();
+                    }
+                    if (formTitle) formTitle.textContent = 'Yorum Yap';
+                    cancelReplyBtn.style.display = 'none';
+                });
+            }
+        }
     });
 
 </script>

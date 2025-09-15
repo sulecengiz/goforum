@@ -1,42 +1,25 @@
 package helpers
 
 import (
-	"goblog/admin/models"
+	"github.com/gorilla/sessions"
 	"net/http"
 )
 
-func SetUser(w http.ResponseWriter, r *http.Request, username string, password string) error {
-	session, err := store.Get(r, "blog-user")
-	if err != nil {
-		return err
-	}
-	session.Values["username"] = username
-	session.Values["password"] = password
+var SessionStore = sessions.NewCookieStore([]byte("site-secret-key-123"))
 
-	return session.Save(r, w)
+func SetUser(w http.ResponseWriter, r *http.Request, user interface{}) {
+	session, _ := SessionStore.Get(r, "session")
+	session.Values["user"] = user
+	session.Save(r, w)
 }
 
-func CheckUser(w http.ResponseWriter, r *http.Request) bool {
-	session, err := store.Get(r, "blog-user")
-	if err != nil {
-		return false
-	}
-	username := session.Values["username"]
-	password := session.Values["password"]
-
-	user := models.User{}.Get("username = ? AND password = ?", username, password)
-	if user.Username == username && user.Password == password {
-		return true
-	}
-	SetAlert(w, r, "Lütfen Giriş Yapın")
-	http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
-	return false
+func GetUser(r *http.Request) interface{} {
+	session, _ := SessionStore.Get(r, "session")
+	return session.Values["user"]
 }
-func RemoveUser(w http.ResponseWriter, r *http.Request) error {
-	session, err := store.Get(r, "blog-user")
-	if err != nil {
-		return err
-	}
-	session.Options.MaxAge = -1
-	return session.Save(r, w)
+
+func RemoveUser(w http.ResponseWriter, r *http.Request) {
+	session, _ := SessionStore.Get(r, "session")
+	delete(session.Values, "user")
+	session.Save(r, w)
 }

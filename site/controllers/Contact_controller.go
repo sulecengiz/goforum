@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"goblog/site/models"
+	"encoding/json"
+	"goforum/site/models"
 	"log"
 	"net/http"
 	"regexp"
@@ -16,42 +17,48 @@ func ContactFormHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
 	name := strings.TrimSpace(r.FormValue("name"))
 	email := strings.TrimSpace(r.FormValue("email"))
 	phone := strings.TrimSpace(r.FormValue("phone"))
 	message := strings.TrimSpace(r.FormValue("message"))
 
 	if name == "" || email == "" || message == "" || phone == "" {
-		http.Error(w, "Tüm zorunlu alanları doldurun.", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "error": "Tüm zorunlu alanları doldurun."})
 		return
 	}
 
 	emailRegex := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 	if !emailRegex.MatchString(email) {
-		http.Error(w, "Geçerli bir e-posta adresi girin.", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "error": "Geçerli bir e-posta adresi girin."})
 		return
 	}
 
-	phoneRegex := regexp.MustCompile("^[0-9]{3}[0-9]{3}[0-9]{2}[0-9]{2}$")
-	if !phoneRegex.MatchString(phone) {
-		http.Error(w, "Telefon numarası formatı geçerli değil (örn: 555-555-55-55).", http.StatusBadRequest)
+	// Telefonu sadece rakamlara indir
+	digitsOnly := regexp.MustCompile("\\D").ReplaceAllString(phone, "")
+	if len(digitsOnly) < 10 || len(digitsOnly) > 15 { // uluslararası esneklik
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "error": "Telefon numarası formatı geçerli değil."})
 		return
 	}
 
 	ContactForm := &models.ContactForm{
 		Name:    name,
 		Email:   email,
-		Phone:   phone,
+		Phone:   digitsOnly,
 		Message: message,
 	}
 
 	err := ContactForm.Add()
 	if err != nil {
 		log.Printf("Veritabanına kaydetme hatası: %v", err)
-		http.Error(w, "Veri kaydedilirken bir hata oluştu.", http.StatusInternalServerError)
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]interface{}{"success": false, "error": "Veri kaydedilirken hata oluştu."})
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Başarılı"))
+	json.NewEncoder(w).Encode(map[string]interface{}{"success": true, "message": "Mesaj kaydedildi."})
 }

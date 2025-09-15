@@ -2,11 +2,7 @@
 package models
 
 import (
-	"fmt"
 	"time"
-
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 // About modeli, sadece bir satır içerecek
@@ -17,11 +13,7 @@ type About struct {
 }
 
 func (a About) Migrate() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println("Veritabanı bağlantısı kurulamadı:", err)
-		return
-	}
+	db := GetDB()
 	db.AutoMigrate(&a)
 
 	// Eğer tablo boşsa, ilk kaydı oluştur
@@ -36,20 +28,13 @@ func (a About) Migrate() {
 }
 
 func (a About) Get() (About, error) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		return a, err
-	}
+	db := GetDB()
 	db.First(&a, 1) // ID 1 olan kaydı getir
 	return a, nil
 }
 
 func (a About) Update() error {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		return err
-	}
+	db := GetDB()
 	a.UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
-	db.Save(&a) // a.ID'ye göre kaydı günceller
-	return nil
+	return db.Save(&a).Error
 }

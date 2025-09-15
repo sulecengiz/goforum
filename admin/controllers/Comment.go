@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/admin/helpers"
-	"goblog/site/models"
+	"goforum/admin/helpers"
+	"goforum/site/models"
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -15,96 +17,161 @@ import (
 type Comment struct{}
 
 func (c Comment) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
-		return
-	}
-	view, err := template.ParseFiles(helpers.Include("comment/list")...)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	data := make(map[string]interface{})
-	data["Comments"] = models.Comment{}.GetAll()
-	data["Alert"] = helpers.GetAlert(w, r)
-	view.ExecuteTemplate(w, "index", data)
-}
-
-func (c Comment) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 
-	id := params.ByName("id")
-
-	// Önce kaydı bulmaya çalışın.
-	Comment, err := models.Comment{}.Get(id)
-	if err != nil {
-		// Kayıt bulunamadıysa veya başka bir hata oluştuysa
-		helpers.SetAlert(w, r, "Kayıt bulunamadı veya bir hata oluştu: "+err.Error())
-		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
-		return
-	}
-
-	err = Comment.Delete()
-	if err != nil {
-		helpers.SetAlert(w, r, "Kayıt silinirken bir hata oluştu: "+err.Error())
-		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
-		return
-	}
-
-	helpers.SetAlert(w, r, "Kayıt başarıyla silindi.")
+	helpers.SetAlert(w, r, "Yorum yönetimi: lütfen sol menüden 'Post Yorumları'nı seçin.")
 	http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
 }
 
-func (c Comment) PostComment(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+// Post listesini gösterir (yorum görüntüleme için seçim ekranı)
+func (c Comment) Posts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 
-	// URL'den post ID'sini al
-	postIDStr := params.ByName("id")
-	postID, err := strconv.Atoi(postIDStr)
+	view, err := template.ParseFiles(helpers.Include("comment/list")...)
 	if err != nil {
-		helpers.SetAlert(w, r, "Geçersiz post ID")
+		fmt.Println(err)
+		http.Redirect(w, r, "/admin", http.StatusSeeOther)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["Posts"] = models.Post{}.GetAll()
+	alertMsg := helpers.GetAlert(w, r)
+	data["Alert"] = map[string]interface{}{
+		"is_alert": alertMsg != "",
+		"message":  alertMsg,
+	}
+	view.ExecuteTemplate(w, "index", data)
+}
+
+// Belirli bir post'un yorumlarını gösterir
+func (c Comment) PostComment(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+		return
+	}
+
+	postIDStr := params.ByName("id")
+	postID64, err := strconv.ParseUint(postIDStr, 10, 32)
+	if err != nil {
+		helpers.SetAlert(w, r, "Geçersiz Post ID")
+		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
+		return
+	}
+	postID := uint(postID64)
+
+	// Post bilgisini al
+	post := models.Post{}.Get("id = ?", postID)
+	if post.ID == 0 {
+		helpers.SetAlert(w, r, "Post bulunamadı")
 		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
 		return
 	}
 
+	// Yorum ağacını getir
+	cm := &models.Comment{}
+	rootComments, err := cm.GetCommentTree(int(post.ID))
+	if err != nil {
+		helpers.SetAlert(w, r, "Yorumlar alınırken hata oluştu")
+		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
+		return
+	}
+
+	// Düz listeye aç (indent için Depth / IndentPx alanları)
+	type FlatComment struct {
+		ID        uint
+		PostID    uint
+		ParentID  *uint
+		Name      string
+		Comment   string
+		Short     string
+		CreatedAt time.Time
+		Depth     int
+		IndentPx  int
+	}
+
+	var flat []FlatComment
+	var walk func(list []*models.Comment, depth int)
+	walk = func(list []*models.Comment, depth int) {
+		for _, cmt := range list {
+			words := strings.Fields(cmt.Comment)
+			shortText := cmt.Comment
+			if len(words) > 4 {
+				shortText = strings.Join(words[:4], " ") + "..."
+			}
+			flat = append(flat, FlatComment{
+				ID:        cmt.ID,
+				PostID:    cmt.PostID,
+				ParentID:  cmt.ParentID,
+				Name:      cmt.Name,
+				Comment:   cmt.Comment,
+				Short:     shortText,
+				CreatedAt: cmt.CreatedAt,
+				Depth:     depth,
+				IndentPx:  depth * 20,
+			})
+			if len(cmt.Replies) > 0 {
+				walk(cmt.Replies, depth+1)
+			}
+		}
+	}
+	walk(rootComments, 0)
+
 	view, err := template.ParseFiles(helpers.Include("comment/comments")...)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Template parse hatası:", err)
+		helpers.SetAlert(w, r, "Şablon yüklenemedi")
+		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
 		return
 	}
 
-	post := models.Post{}.Get(postIDStr)
-
-	// Admin paneli için flat liste alıyoruz (ParentID ve ParentName ile birlikte)
-	comments, err := (&models.Comment{}).GetCommentsByPostID(postID)
-	if err != nil {
-		fmt.Println(err)
-		return
+	alertMsg := helpers.GetAlert(w, r)
+	data := map[string]interface{}{
+		"Post":     post,
+		"Comments": flat,
+		"Alert": map[string]interface{}{
+			"is_alert": alertMsg != "",
+			"message":  alertMsg,
+		},
 	}
-
-	data := make(map[string]interface{})
-	data["Post"] = post
-	data["Comments"] = comments // ParentID ve ParentName ile reply’ler görünecek
-	data["Alert"] = helpers.GetAlert(w, r)
-
 	view.ExecuteTemplate(w, "index", data)
 }
 
-// Post listesini gösteren fonksiyon
-func (c Comment) Posts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+// Yorum silme (tek yorum). İstenirse alt yorumlar ek olarak silinebilir.
+func (c Comment) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
-	view, err := template.ParseFiles(helpers.Include("comment/list")...)
+	idStr := params.ByName("id")
+	id64, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
-		fmt.Println(err)
+		helpers.SetAlert(w, r, "Geçersiz yorum id")
+		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
 		return
 	}
-	data := make(map[string]interface{})
-	data["Posts"] = models.Post{}.GetAll()
-	data["Alert"] = helpers.GetAlert(w, r)
-	view.ExecuteTemplate(w, "index", data)
+	cid := uint(id64)
+
+	// Yorumu bul (redirect için PostID lazım)
+	var found models.Comment
+	if err := models.GetDB().First(&found, cid).Error; err != nil || found.ID == 0 {
+		helpers.SetAlert(w, r, "Yorum bulunamadı")
+		http.Redirect(w, r, "/admin/comment/posts", http.StatusSeeOther)
+		return
+	}
+
+	deleteErr := models.Comment{}.Delete(cid)
+	if deleteErr != nil {
+		helpers.SetAlert(w, r, "Yorum silinirken hata")
+	} else {
+		helpers.SetAlert(w, r, "Yorum silindi")
+	}
+
+	http.Redirect(w, r, "/admin/comment/comments/"+strconv.FormatUint(uint64(found.PostID), 10), http.StatusSeeOther)
 }

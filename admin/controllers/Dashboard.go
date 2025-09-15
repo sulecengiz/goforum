@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/admin/helpers"
-	"goblog/admin/models"
+	"goforum/admin/helpers"
+	"goforum/admin/models"
 	"html/template"
 	"io"
 	"net/http"
@@ -17,28 +17,52 @@ import (
 type Dashboard struct{}
 
 func (dashboard Dashboard) Index(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Dashboard.Index başladı")
+
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+	fmt.Println("Admin login başarılı")
+
 	view, err := template.New("index").Funcs(template.FuncMap{
 		"getCategory": func(categoryID int) string {
 			return models.Category{}.Get(categoryID).Title
 		},
 	}).ParseFiles(helpers.Include("dashboard/list")...)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Template parse error:", err)
+		http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	data := make(map[string]interface{})
 	data["Posts"] = models.Post{}.GetAll()
-	data["Alert"] = helpers.GetAlert(w, r)
-	view.ExecuteTemplate(w, "index", data)
+	alert := helpers.GetAlert(w, r) // string
+	data["Alert"] = map[string]interface{}{
+		"is_alert": alert != "",
+		"message":  alert,
+	}
+
+	err = view.ExecuteTemplate(w, "index", data)
+	if err != nil {
+		fmt.Println("Template execute error:", err)
+		http.Error(w, "Template exec error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("Template başarıyla render edildi")
 }
 
 func (dashboard Dashboard) NewItem(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Fonksiyon başladı:", r.URL.Path)
+
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+
 	view, err := template.ParseFiles(helpers.Include("dashboard/add")...)
 	if err != nil {
 		fmt.Println(err)
@@ -50,9 +74,13 @@ func (dashboard Dashboard) NewItem(w http.ResponseWriter, r *http.Request, param
 }
 
 func (dashboard Dashboard) Add(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Fonksiyon başladı:", r.URL.Path)
+
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+
 	title := r.FormValue("blog-title")
 	slug := slug.Make(title)
 	description := r.FormValue("blog-desc")
@@ -84,24 +112,33 @@ func (dashboard Dashboard) Add(w http.ResponseWriter, r *http.Request, params ht
 		CategoryID:  categoryID,
 		Content:     content,
 		Picture_url: "uploads/" + header.Filename,
+		Approved:    true, // admin eklediği için otomatik onaylı
 	}.Add()
 	helpers.SetAlert(w, r, "Kayıt Başarıyla Eklendi")
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }
 
 func (dashboard Dashboard) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Fonksiyon başladı:", r.URL.Path)
+
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+
 	post := models.Post{}.Get(params.ByName("id"))
 	post.Delete()
 	http.Redirect(w, r, "/admin", http.StatusSeeOther)
 }
 
 func (dashboard Dashboard) Edit(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Fonksiyon başladı:", r.URL.Path)
+
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+
 	view, err := template.ParseFiles(helpers.Include("dashboard/edit")...)
 	if err != nil {
 		fmt.Println(err)
@@ -114,9 +151,13 @@ func (dashboard Dashboard) Edit(w http.ResponseWriter, r *http.Request, params h
 }
 
 func (dashboard Dashboard) Update(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	fmt.Println("Fonksiyon başladı:", r.URL.Path)
+
+	if !helpers.IsAdminLoggedIn(r) {
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
+
 	post := models.Post{}.Get(params.ByName("id"))
 	title := r.FormValue("blog-title")
 	slug := slug.Make(title)

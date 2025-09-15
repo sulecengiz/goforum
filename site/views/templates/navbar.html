@@ -1,19 +1,41 @@
 {{ define "navbar" }}
-<!-- Navigation-->
-<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-  <div class="container">
-    <a class="navbar-brand" href="/">GoBlog</a>
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      Menu
-      <i class="fas fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="/">Anasayfa</a></li>
-        <li class="nav-item"><a class="nav-link" href="/index">Hakkımızda</a></li>
-        <li class="nav-item"><a class="nav-link" href="/contact">İletişim</a></li>
-      </ul>
+<style>
+#mainNav .navbar-nav { margin-left:auto !important; }
+</style>
+<nav class="navbar coffee-nav navbar-expand-lg fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="/">GoBlog</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav mb-2 mb-lg-0" style="margin-left:auto;">
+                <li class="nav-item"><a class="nav-link" href="/">Anasayfa</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">Hakkımızda</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">İletişim</a></li>
+                {{ if ne .User nil }}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdownMain" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user mx-2"></i>{{ .User.Username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMain">
+                        {{ if eq .User.Role 1 }}
+                        <li><a class="dropdown-item" href="/admin">Yönetim</a></li>
+                        <li><hr class="dropdown-divider"/></li>
+                        <li><a class="dropdown-item" href="/logout">Çıkış Yap</a></li>
+                        {{ else }}
+                        <li><a class="dropdown-item" href="/profile">Profil</a></li>
+                        <li><hr class="dropdown-divider"/></li>
+                        <li><a class="dropdown-item" href="/logout">Çıkış Yap</a></li>
+                        {{ end }}
+                    </ul>
+                </li>
+                {{ else }}
+                <li class="nav-item"><a class="nav-link" href="/login">Giriş Yap</a></li>
+                {{ end }}
+
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 {{ end }}

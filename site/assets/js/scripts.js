@@ -43,4 +43,37 @@
             });
     }
 
+    // Like (beğeni) toggling
+    $(document).on('click', '.like-btn', function (e) {
+        e.preventDefault();
+        var $btn = $(this);
+        if ($btn.data('busy')) return; // Spam engelle
+        var commentId = $btn.data('comment-id');
+        if (!commentId) return;
+        $btn.data('busy', true);
+        fetch('/like-comment/' + commentId, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(function (res) {
+            if (res.status === 401) { window.location.href = '/login'; return Promise.reject(); }
+            if (!res.ok) return Promise.reject();
+            return res.json();
+        }).then(function (data) {
+            if (!data || !data.success) return;
+            var likeCountEl = document.getElementById('like-count-' + commentId);
+            var iconEl = document.getElementById('like-icon-' + commentId);
+            var labelEl = document.getElementById('like-label-' + commentId);
+            if (likeCountEl) likeCountEl.textContent = data.likeCount;
+            if (iconEl) {
+                if (data.isLiked) { iconEl.classList.remove('far'); iconEl.classList.add('fas'); $btn.addClass('liked'); $btn.attr('aria-pressed','true'); }
+                else { iconEl.classList.remove('fas'); iconEl.classList.add('far'); $btn.removeClass('liked'); $btn.attr('aria-pressed','false'); }
+            }
+            if (labelEl) {
+                if (data.likeCount === 0) labelEl.textContent = 'Beğen';
+                else if (data.likeCount === 1) labelEl.textContent = '1 beğeni';
+                else labelEl.textContent = data.likeCount + ' beğeni';
+            }
+        }).catch(function () { /* sessiz geç */ }).finally(function () { $btn.data('busy', false); });
+    });
+
 })(jQuery); // End of use strict

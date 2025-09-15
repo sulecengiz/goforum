@@ -1,0 +1,40 @@
+{{ define "content" }}
+<h1>{{ .UserObj.Username }} - Postları</h1>
+<hr>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Başlık</th>
+        <th>Kategori</th>
+        <th>Durum</th>
+        <th>Oluşturulma</th>
+        <th>İşlemler</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ range $i,$p := .Posts }}
+        <tr>
+            <td>{{ $p.ID }}</td>
+            <td>{{ $p.Title }}</td>
+            <td>{{ getCategory $p.CategoryID }}</td>
+            <td>
+                {{ if $p.Approved }}
+                <span class="badge badge-success">Onaylı</span>
+                {{ else }}
+                <span class="badge badge-warning">Bekliyor</span>
+                {{ end }}
+            </td>
+            <td>{{ $p.CreatedAt.Format "02.01.2006 15:04" }}</td>
+            <td class="d-flex gap-1">
+                <a href="/admin/post/detail/{{ $p.ID }}" class="btn btn-sm btn-outline-info mr-1">Detay</a>
+                <a href="/admin/post/toggle-approve/{{ $p.ID }}" class="btn btn-sm {{ if $p.Approved }}btn-outline-danger{{ else }}btn-outline-success{{ end }}">
+                    {{ if $p.Approved }}Onayı Kaldır{{ else }}Onayla{{ end }}
+                </a>
+            </td>
+        </tr>
+    {{ end }}
+    </tbody>
+</table>
+<a href="/admin/user" class="btn btn-secondary">Geri</a>
+{{ end }}

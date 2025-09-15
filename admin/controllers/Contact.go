@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/admin/helpers"
-	"goblog/site/models"
+	"goforum/admin/helpers"
+	"goforum/site/models"
 	"html/template"
 	"net/http"
 
@@ -14,7 +14,9 @@ import (
 type Contact struct{}
 
 func (c Contact) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 	view, err := template.ParseFiles(helpers.Include("contact/list")...)
@@ -24,12 +26,18 @@ func (c Contact) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	}
 	data := make(map[string]interface{})
 	data["Contacts"] = models.ContactForm{}.GetAll()
-	data["Alert"] = helpers.GetAlert(w, r)
+	data["Alert"] = map[string]interface{}{
+		"is_alert": helpers.GetAlert(w, r) != "",
+		"message":  helpers.GetAlert(w, r),
+	}
+
 	view.ExecuteTemplate(w, "index", data)
 }
 
 func (c Contact) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 

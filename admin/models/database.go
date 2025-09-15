@@ -1,8 +1,6 @@
 package models
 
 import (
-	"log"
-
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -11,14 +9,15 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	var err error
-
-	DB, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-
+	DB, err = gorm.Open(sqlite.Open("goforum.db"), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Veritabanına bağlanılamadı: %v", err)
+		panic("Veritabanına bağlanılamadı: " + err.Error())
 	}
+}
 
-	log.Println("Veritabanı bağlantısı başarılı!")
-
-	// DB.AutoMigrate(&YourModel{})
+func GetDB() *gorm.DB {
+	if DB == nil {
+		ConnectDB()
+	}
+	return DB
 }

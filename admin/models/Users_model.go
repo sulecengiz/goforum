@@ -1,74 +1,66 @@
+// models/User.go
 package models
 
 import (
-	"fmt"
-
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type User struct {
 	gorm.Model
-	Username, Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
+	Role     Role   `json:"role"`
 }
 
-func (p User) Migrate() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.AutoMigrate(&p)
-}
-
-func (p User) Add() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Create(&p)
-}
-func (p User) Get(where ...interface{}) User {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return p
-	}
-	db.First(&p, where...)
-	return p
-}
-func (p User) GetAll(where ...interface{}) []User {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
+func (user *User) Login() *User {
+	db := GetDB()
+	if db == nil {
 		return nil
 	}
-	var Users []User
-	db.Find(&Users, where...)
-	return Users
-}
-func (p User) Update(column string, value interface{}) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
+
+	var result User
+	if err := db.Where("username = ? AND password = ?", user.Username, user.Password).First(&result).Error; err != nil {
+		return nil
 	}
-	db.Model(&p).Update(column, value)
+	return &result
 }
-func (p User) Updates(data User) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
+
+func (user User) Get(where ...interface{}) User {
+	db := GetDB()
+	if db == nil {
+		return User{}
 	}
-	db.Model(&p).Updates(data)
+
+	var result User
+	db.First(&result, where...)
+	return result
 }
-func (p User) Delete() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
+
+func (user *User) Register() error {
+	db := GetDB()
+	if db == nil {
+		return nil
 	}
-	db.Delete(&p, p.ID)
+	return db.Create(user).Error
+}
+
+func (user User) Migrate() {
+	db := GetDB()
+	if db != nil {
+		db.AutoMigrate(User{})
+	}
+
+}
+
+func (user User) GetAll() interface{} {
+	db := GetDB()
+	if db == nil {
+		return nil
+	}
+
+	var users []User
+	db.Find(&users)
+	return users
+
 }

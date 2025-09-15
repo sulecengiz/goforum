@@ -3,37 +3,30 @@
 package helpers
 
 import (
-	"fmt"
 	"net/http"
-
-	"github.com/gorilla/sessions"
 )
 
-var store = sessions.NewCookieStore([]byte("123123"))
-
 func SetAlert(w http.ResponseWriter, r *http.Request, message string) error {
-	session, err := store.Get(r, "go-alert")
+	session, err := GetAdminSession(r)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
-	session.AddFlash(message)
+	session.Values["alert"] = message
 	return session.Save(r, w)
 }
 
-func GetAlert(w http.ResponseWriter, r *http.Request) interface{} {
-	session, err := store.Get(r, "go-alert")
+func GetAlert(w http.ResponseWriter, r *http.Request) string {
+	session, err := GetAdminSession(r)
 	if err != nil {
-		fmt.Println(err)
-		return nil
+		return ""
 	}
-	flashes := session.Flashes()
 
-	// Mesajı aldıktan sonra hemen çerezi kaydederek temizle
+	msg, ok := session.Values["alert"].(string)
+	if !ok {
+		return ""
+	}
+
+	delete(session.Values, "alert")
 	session.Save(r, w)
-
-	if len(flashes) > 0 {
-		return flashes[0]
-	}
-	return nil
+	return msg
 }

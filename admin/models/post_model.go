@@ -2,8 +2,8 @@ package models
 
 import (
 	"fmt"
+	"time"
 
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -11,69 +11,41 @@ type Post struct {
 	gorm.Model
 	Title, Slug, Description, Content, Picture_url string
 	CategoryID                                     int
+	AuthorID                                       int        `json:"author_id"`
+	Approved                                       bool       `gorm:"default:false" json:"approved"`
+	ApprovedAt                                     *time.Time `json:"approved_at"`
 }
 
 func (p Post) Migrate() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
+	db := GetDB()
+	if err := db.AutoMigrate(&p); err != nil {
+		fmt.Println("Post migrate hata:", err)
 	}
-	db.AutoMigrate(&p)
-}
-
-func dbPath() string {
-	return "C:/Users/Selly/Desktop/goblog/test.db"
 }
 
 func (p Post) Add() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Create(&p)
+	GetDB().Create(&p)
 }
 func (p Post) Get(where ...interface{}) Post {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return p
-	}
-	db.First(&p, where...)
+	GetDB().First(&p, where...)
 	return p
 }
 func (p Post) GetAll(where ...interface{}) []Post {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return nil
-	}
 	var posts []Post
-	db.Find(&posts, where...)
+	GetDB().Find(&posts, where...)
 	return posts
 }
 func (p Post) Update(column string, value interface{}) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Update(column, value)
+	GetDB().Model(&p).Update(column, value)
 }
 func (p Post) Updates(data Post) {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Model(&p).Updates(data)
+	GetDB().Model(&p).Updates(data)
 }
 func (p Post) Delete() {
-	db, err := gorm.Open(sqlite.Open(dbPath()), &gorm.Config{})
-	if err != nil {
-		fmt.Println()
-		return
-	}
-	db.Delete(&p, p.ID)
+	GetDB().Delete(&p, p.ID)
+}
+func (p Post) GetByAuthor(authorID uint) []Post {
+	var posts []Post
+	GetDB().Where("author_id = ?", authorID).Find(&posts)
+	return posts
 }

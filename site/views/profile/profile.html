@@ -1,0 +1,159 @@
+{{ define "content" }}
+<style>
+    .flip-hourglass {
+        animation: flip 3s ease-in-out infinite;
+        display: inline-block; /* Bu önemli */
+    }
+    @keyframes flip {
+        0%, 80% { transform: rotate(0deg); }
+        90%, 100% { transform: rotate(180deg); }
+    }
+</style>
+<!-- Page Header-->
+<header class="text-center py-5" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-white mb-3">Profil</h1>
+                <p class="text-light">{{ .User.Username }} - Kişisel Profil Sayfası</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content-->
+<div class="container py-5">
+    <div class="row">
+        <!-- Sol Panel - Kullanıcı Bilgileri -->
+        <div class="col-lg-4 mb-5">
+            <div class="card shadow-sm" style="background-color: #5a4a42; border: none;">
+                <div class="card-header text-white" style="background: linear-gradient(90deg, #4b3832, #7b5e57);">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Kullanıcı Bilgileri</h5>
+                </div>
+                <div class="card-body" style="color: #f5deb3;">
+                    <div class="text-center mb-3">
+                        <i class="fas fa-user-circle fa-5x" style="color: #cbb682;"></i>
+                    </div>
+                    <p><strong>Kullanıcı Adı:</strong> {{ .User.Username }}</p>
+                    <p><strong>E-posta:</strong> {{ .User.Email }}</p>
+                    <p><strong>Blog Sayısı:</strong> {{ .PostCount }}</p>
+                    <p><strong>Yorum Sayısı:</strong> {{ .CommentCount }}</p>
+                    <p><strong>Üyelik Tarihi:</strong> {{ .User.CreatedAt.Format "02.01.2006" }}</p>
+                    <hr style="border-color: #7b5e57;">
+                    <a href="/new-post" class="btn w-100" style="background: linear-gradient(90deg, #7b5e57, #a1866f); color: white; border: none;">
+                        <i class="fas fa-plus me-2"></i>Yeni Blog Yazısı
+                    </a>
+                </div>
+            </div>
+
+            <!-- Yorumlar Panel -->
+            <div class="card mt-4 shadow-sm" style="background-color: #5a4a42; border: none;">
+                <div class="card-header text-white" style="background: linear-gradient(90deg, #4b3832, #7b5e57);">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Son Yorumlarım</h5>
+                </div>
+                <div class="card-body" style="color: #f5deb3; max-height: 300px; overflow-y: auto;">
+                    {{ if .UserComments }}
+                    {{ range .UserComments }}
+                    <div class="border-bottom pb-2 mb-2" style="border-color: #7b5e57 !important;">
+                        <a href="/yazilar/{{ getPostSlug .PostID }}#comment-{{ .ID }}" class="d-block text-decoration-none" style="color:#cbb682;">
+                            <p class="mb-1 small" style="color:#f5deb3;">{{ .Comment }}</p>
+                            <small style="color: #a1866f;">{{ getDate .CreatedAt }}</small>
+                        </a>
+                    </div>
+                    {{ end }}
+                    {{ else }}
+                    <p class="text-center" style="color: #a1866f;">Henüz yorum yapmadınız.</p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel - Blog Yazıları -->
+        <div class="col-lg-8 d-flex flex-column gap-4">
+            <!-- Pending Posts Card -->
+            <div class="card shadow-sm mb-4" style="background-color:#5a4a42; border:none;">
+                <div class="card-header text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(90deg,#4b3832,#7b5e57);">
+                    <h5 class="mb-0"><i class="fas fa-hourglass-half me-2"></i>Onay Bekleyen Yazılarım</h5>
+                    <span class="badge badge-warning" style="background:rgba(211,158,0,0.78);">{{ len .PendingPosts }}</span>
+                </div>
+                <div class="card-body" style="color:#f5deb3;">
+                    {{ if .PendingPosts }}
+                        {{ range .PendingPosts }}
+                        <div class="border-bottom mb-3 pb-3" style="border-color:#7b5e57 !important;">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-2" style="color:#cbb682;">
+                                        {{ .Title }}
+                                        <i class="fas fa-hourglass-half flip-hourglass" title="Onay bekliyor" style="color:rgba(211,158,0,0.78); margin-left:8px; font-size:smaller"></i>
+                                    </h4>
+                                    <p class="text-light mb-2">{{ .Description }}</p>
+                                    <p class="small mb-2" style="color:#a1866f;">
+                                        <i class="fas fa-calendar me-1"></i>{{ getDate .CreatedAt }}
+                                        <span class="mx-2">|</span>
+                                        <i class="fas fa-folder me-1"></i>{{ getCategory .CategoryID }}
+                                        <span class="ml-2" style="color:rgba(211,158,0,0.78); font-weight:600;">(Onay Bekliyor)</span>
+                                    </p>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="btn-group-vertical">
+                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm mb-1" style="background-color:#a1866f; color:white; border:none;">
+                                            <i class="fas fa-edit me-1"></i>Düzenle
+                                        </a>
+                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm" style="background-color:#8b4513; color:white; border:none;" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
+                                            <i class="fas fa-trash me-1"></i>Sil
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ end }}
+                    {{ else }}
+                        <p class="text-muted" style="color:#cbb682 !important;">Bekleyen yazı yok.</p>
+                    {{ end }}
+                </div>
+            </div>
+            <!-- Approved Posts Card -->
+            <div class="card shadow-sm" style="background-color:#5a4a42; border:none;">
+                <div class="card-header text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(90deg,#4b3832,#7b5e57);">
+                    <h5 class="mb-0"><i class="fas fa-check me-2"></i>Onaylanmış Yazılarım</h5>
+                    <span class="badge badge-success">{{ len .ApprovedPosts }}</span>
+                </div>
+                <div class="card-body" style="color:#f5deb3;">
+                    {{ if .ApprovedPosts }}
+                        {{ range .ApprovedPosts }}
+                        <div class="border-bottom mb-3 pb-3" style="border-color:#7b5e57 !important;">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-2" style="color:#cbb682;">{{ .Title }}</h4>
+                                    <p class="text-light mb-2">{{ .Description }}</p>
+                                    <p class="small mb-2" style="color:#a1866f;">
+                                        <i class="fas fa-calendar me-1"></i>{{ getDate .CreatedAt }}
+                                        <span class="mx-2">|</span>
+                                        <i class="fas fa-folder me-1"></i>{{ getCategory .CategoryID }}
+                                    </p>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="btn-group-vertical">
+                                        <a href="/yazilar/{{ .Slug }}" class="btn btn-sm mb-1" style="background-color:#7b5e57; color:white; border:none;">
+                                            <i class="fas fa-eye me-1"></i>Görüntüle
+                                        </a>
+                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm mb-1" style="background-color:#a1866f; color:white; border:none;">
+                                            <i class="fas fa-edit me-1"></i>Düzenle
+                                        </a>
+                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm" style="background-color:#8b4513; color:white; border:none;" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
+                                            <i class="fas fa-trash me-1"></i>Sil
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ end }}
+                    {{ else }}
+                        <p class="text-muted" style="color:#cbb682 !important;">Henüz onaylanmış yazı yok.</p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

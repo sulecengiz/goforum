@@ -1,0 +1,104 @@
+{{ define "content" }}
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<!-- Page Header-->
+<header class="text-center py-5" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="text-white mb-3">Blog Düzenle</h1>
+                <p class="text-light">{{ .Post.Title }} - Düzenleme</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content-->
+<div class="container py-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-edit mr-2"></i>Blog Yazısını Düzenle</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/update-post/{{ .Post.ID }}" method="POST" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" id="title" name="title" required
+                                   value="{{ .Post.Title }}" placeholder="Blog yazınızın başlığını girin">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Kısa Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required
+                                      placeholder="Blog yazınızın kısa açıklamasını girin">{{ .Post.Description }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="category_id" class="form-label">Kategori</label>
+                            <select class="form-control" id="category_id" name="category_id" required>
+                                <option value="">Kategori Seçin</option>
+                                {{ range .Categories }}
+                                <option value="{{ .ID }}" {{ if eq .ID $.Post.CategoryID }}selected{{ end }}>{{ .Title }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="post_content" class="form-label">İçerik</label>
+                            <textarea class="form-control" id="post_content" name="content" rows="15" required
+                                      placeholder="Blog yazınızın içeriğini girin">{{ .Post.Content }}</textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label d-block">Mevcut Görsel</label>
+                            {{ if .Post.Picture_url }}
+                                <img src="/{{ .Post.Picture_url }}" alt="Görsel" style="max-width:180px;border-radius:8px;border:1px solid #ddd;" />
+                            {{ else }}
+                                <span class="text-muted">Görsel yok</span>
+                            {{ end }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="picture" class="form-label">Yeni Görsel (isteğe bağlı)</label>
+                            <input type="file" id="picture" name="blog-picture" class="form-control" />
+                            <small class="text-muted">Boş bırakırsanız mevcut görsel korunur.</small>
+                        </div>
+
+                        <div class="form-group d-flex justify-content-between">
+                            <a href="/profile" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mx-1"></i>Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save mx-1"></i> Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script>
+ $(function(){
+   $('#post_content').summernote({
+     height:300,
+     placeholder:'Blog yazınızın içeriğini buraya yazın...',
+     toolbar:[
+       ['style',['style']],
+       ['font',['bold','italic','underline','strikethrough','superscript','subscript','clear']],
+       ['fontname',['fontname']],
+       ['fontsize',['fontsize']],
+       ['color',['color']],
+       ['para',['ul','ol','paragraph']],
+       ['height',['height']],
+       ['table',['table']],
+       ['insert',['link','picture','hr']],
+       ['view',['fullscreen','codeview']],
+       ['help',['help']]
+     ]
+   });
+ });
+</script>
+{{ end }}

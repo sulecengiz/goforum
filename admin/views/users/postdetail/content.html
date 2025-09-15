@@ -1,0 +1,62 @@
+{{ define "content" }}
+<h1>Post Detay (#{{ .Post.ID }})</h1>
+<hr>
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>{{ .Post.Title }}</strong>
+        <span>
+          {{ if .Post.Approved }}
+            <span class="badge badge-success">Onaylı</span>
+          {{ else }}
+            <span class="badge badge-warning">Onay Bekliyor</span>
+          {{ end }}
+        </span>
+      </div>
+      <div class="card-body">
+        <p><strong>Açıklama:</strong><br>{{ .Post.Description }}</p>
+        <p><strong>Kategori:</strong> {{ getCategory .Post.CategoryID }}</p>
+        <p><strong>Oluşturulma:</strong> {{ .Post.CreatedAt.Format "02.01.2006 15:04" }}</p>
+        <p><strong>Güncellenme:</strong> {{ .Post.UpdatedAt.Format "02.01.2006 15:04" }}</p>
+        <p><strong>Onay Tarihi:</strong>
+          {{ if .Post.ApprovedAt }}
+            {{ .Post.ApprovedAt.Format "02.01.2006 15:04" }}
+          {{ else }}-
+          {{ end }}
+        </p>
+        {{ if .Post.Picture_url }}
+        <p><strong>Kapak Görseli:</strong></p>
+        <img src="/{{ .Post.Picture_url }}" class="img-fluid mb-3" style="max-height:300px;object-fit:cover;"/>
+        {{ end }}
+        <p><strong>İçerik (HTML Render):</strong></p>
+        <div id="post-content-render" style="background:#f8f9fc; padding:12px; border-radius:4px; border:1px solid #e3e6f0;">
+          <!-- JS ile doldurulacak -->
+        </div>
+        <script>
+          (function(){
+            var raw = {{ printf "%q" .Post.Content }};
+            // Literal \r\n veya \n dizilerini gerçek satır sonuna çevir
+            raw = raw.replace(/\\r\\n/g, '\n').replace(/\\n/g,'\n');
+            // Güvenlik: script taglerini etkisizleştir
+            raw = raw.replace(/<script/gi, '&lt;script').replace(/<\/script>/gi,'&lt;/script&gt;');
+            // Eğer içerikte HTML tag yoksa (basit kontrol) newline'ları <br> yap
+            if(!/<[a-zA-Z][\s\S]*>/.test(raw)) {
+              raw = raw.replace(/\n/g,'<br>');
+            }
+            document.getElementById('post-content-render').innerHTML = raw.trim();
+          })();
+        </script>
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/admin/post/toggle-approve/{{ .Post.ID }}" class="btn {{ if .Post.Approved }}btn-outline-danger{{ else }}btn-outline-success{{ end }} mr-2">
+        {{ if .Post.Approved }}Onayı Kaldır{{ else }}Onayla{{ end }}
+      </a>
+      <a href="/admin/edit/{{ .Post.ID }}" class="btn btn-outline-warning mr-2">Düzenle</a>
+      <a href="/admin/delete/{{ .Post.ID }}" onclick="return confirm('Silinsin mi?')" class="btn btn-outline-danger mr-2">Sil</a>
+      <a href="javascript:history.back()" class="btn btn-secondary">Geri</a>
+    </div>
+  </div>
+</div>
+{{ end }}

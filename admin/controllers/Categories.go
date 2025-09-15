@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"fmt"
-	"goblog/admin/helpers"
-	"goblog/admin/models"
+	"goforum/admin/helpers"
+	"goforum/admin/models"
 	"html/template"
 	"net/http"
 
@@ -14,7 +14,9 @@ import (
 type Categories struct{}
 
 func (category Categories) Index(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 	view, err := template.ParseFiles(helpers.Include("categories/list")...)
@@ -29,7 +31,9 @@ func (category Categories) Index(w http.ResponseWriter, r *http.Request, params 
 }
 
 func (category Categories) Add(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 	categoryTitle := r.FormValue("category-title")
@@ -41,7 +45,9 @@ func (category Categories) Add(w http.ResponseWriter, r *http.Request, params ht
 }
 
 func (category Categories) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	if !helpers.CheckUser(w, r) {
+	if !helpers.IsAdminLoggedIn(r) {
+		fmt.Println("Admin login yok, redirect")
+		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 		return
 	}
 	categories := models.Category{}.Get(params.ByName("id"))

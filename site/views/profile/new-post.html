@@ -1,0 +1,103 @@
+{{ define "content" }}
+<style>
+    .masthead{
+        background-image: url('/assets/assets/img/home-bg.jpg');
+        transform: scaleX(-1);
+    }
+    .page-heading{
+        transform: scaleX(-1);
+    }
+</style>
+<!-- Page Header-->
+<header class="masthead" >
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="page-heading" style="color: #1a1a1a">
+                    <h1>Yeni Blog Yazısı</h1>
+                    <span class="subheading">Düşüncelerinizi paylaşın</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content-->
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-edit mr-2"></i>Blog Yazısı Oluştur</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/create-post" method="POST" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label for="title" class="form-label">Başlık</label>
+                            <input type="text" class="form-control" id="title" name="title" required placeholder="Blog yazınızın başlığını girin">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Kısa Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required placeholder="Blog yazınızın kısa açıklamasını girin"></textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="category_id" class="form-label">Kategori</label>
+                            <select class="form-control" id="category_id" name="category_id" required>
+                                <option value="">Kategori Seçin</option>
+                                {{ range .Categories }}
+                                <option value="{{ .ID }}">{{ .Title }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="picture" class="form-label" >Blog Görseli</label>
+                            <input type="file" id="picture" name="blog-picture" class="form-control">
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="post_content" class="form-label">İçerik</label>
+                            <textarea class="form-control" id="post_content" name="content" rows="15" required placeholder="Blog yazınızın içeriğini girin"></textarea>
+                        </div>
+
+                        <div class="form-group d-flex justify-content-between">
+                            <a href="/profile" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i>Geri Dön
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save mr-2"></i>Blog Yazısını Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Summernote CSS/JS (lite) -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script>
+ $(function(){
+   $('#post_content').summernote({
+     height:300,
+     placeholder:'Blog yazınızın içeriğini buraya yazın...',
+     toolbar:[
+       ['style',['style']],
+       ['font',['bold','italic','underline','strikethrough','superscript','subscript','clear']],
+       ['fontname',['fontname']],
+       ['fontsize',['fontsize']],
+       ['color',['color']],
+       ['para',['ul','ol','paragraph']],
+       ['height',['height']],
+       ['table',['table']],
+       ['insert',['link','picture','hr']],
+       ['view',['fullscreen','codeview']],
+       ['help',['help']]
+     ]
+   });
+ });
+</script>
+{{ end }}
