@@ -1,6 +1,64 @@
 {{ define "navbar" }}
 <style>
 #mainNav .navbar-nav { margin-left:auto !important; }
+
+/* Hamburger menü butonunu mobilde görünür yap */
+.navbar-toggler {
+    border: 1px solid rgba(0,0,0,.25); /* siyah ton */
+    background-color: transparent;
+    padding: 0.25rem 0.75rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    border-radius: 0.375rem;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0,0,0,.25);
+}
+
+/* Hamburger icon stil (siyah) */
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    vertical-align: middle;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0,0,0,0.90)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+/* Navbar responsive düzenlemeler */
+@media (max-width: 991.98px) {
+    .navbar-nav {
+        margin-left: 0 !important;
+        text-align: center;
+    }
+
+    .navbar-collapse {
+        margin-top: 1rem;
+    }
+
+    .nav-item {
+        margin: 0.2rem 0;
+    }
+
+    .dropdown-menu {
+        position: static !important;
+        transform: none !important;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        background-color: rgba(0,0,0,0.05);
+    }
+}
+
+/* Navbar brand responsive */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+}
 </style>
 <nav class="navbar coffee-nav navbar-expand-lg fixed-top" id="mainNav">
     <div class="container">

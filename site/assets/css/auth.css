@@ -1,0 +1,116 @@
+/* Coffee Auth Theme Overrides (loaded after styles.css) */
+
+/* Navbar fixed-top boşluğu – formun altında kalmasını engelle */
+section.gradient-form { margin-top:0; padding-top:130px; }
+@media (max-width:575.98px){ section.gradient-form { padding-top:110px; } }
+
+/* Satır ve kolonların tam yükseklik alması */
+.auth-card .row.g-0, .auth-card .row { display:flex; align-items:stretch; }
+.auth-card .row.g-0 > [class*='col-'], .auth-card .row > [class*='col-'] { display:flex; flex-direction:column; }
+.auth-form-col { background:#ffffff; }
+.auth-right-panel { flex:1 1 50%; position:relative; }
+.auth-right-panel:before { content:""; position:absolute; inset:0; background:linear-gradient(135deg,rgba(75,56,50,.55),rgba(161,134,111,.35)); mix-blend-mode:overlay; pointer-events:none; }
+.auth-right-panel .panel-inner { position:relative; z-index:2; }
+
+/* Küçük ekranlarda sağ panel alta gelsin ve yeterli boşluk olsun */
+@media (max-width:991.98px){
+  .auth-card .row.g-0, .auth-card .row { flex-direction:column; }
+  .auth-right-panel { min-height:260px; }
+}
+
+/* Gradient arka plan (var olanı güçlendir) */
+.gradient-custom-2 { background: linear-gradient(135deg,#4b3832 0%,#7b5e57 45%,#a1866f 100%) !important; }
+
+/* Coffee butonları – base .btn kuralını ezmek için iki sınıf kullanıyoruz */
+.btn.btn-coffee {
+  background: linear-gradient(135deg,#7b5e57 0%,#a1866f 100%);
+  border:1px solid #6a514b;
+  color:#fbe9d8 !important;
+  font-weight:600;
+  letter-spacing:.4px;
+  padding:.65rem 1.15rem;
+  font-size:.95rem;
+  border-radius:.6rem;
+  box-shadow:0 4px 14px -3px rgba(75,56,50,.45);
+  transition:all .25s ease;
+}
+.btn.btn-coffee:hover, .btn.btn-coffee:focus {
+  background: linear-gradient(135deg,#8a6d3b 0%,#b4977a 100%);
+  color:#fff !important;
+  transform:translateY(-2px);
+  box-shadow:0 8px 18px -4px rgba(75,56,50,.55);
+  filter:brightness(1.07);
+}
+.btn.btn-coffee:active {
+  transform:translateY(0);
+  box-shadow:0 4px 12px -4px rgba(75,56,50,.6);
+}
+
+.btn.btn-coffee-sm { padding:.45rem .95rem !important; font-size:.8rem !important; }
+
+.btn.btn-outline-coffee {
+  border:2px solid #7b5e57;
+  color:#7b5e57;
+  font-weight:600;
+  letter-spacing:.4px;
+  padding:.5rem 1rem;
+  font-size:.9rem;
+  border-radius:.6rem;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(2px);
+  transition:all .25s ease;
+}
+.btn.btn-outline-coffee:hover {
+  background:#7b5e57;
+  color:#fff;
+  box-shadow:0 6px 16px -4px rgba(75,56,50,.5);
+}
+.btn.btn-outline-coffee:active { transform:translateY(1px); }
+
+/* Linkler */
+.auth-card a.text-muted { font-size:.8rem; }
+.auth-card a.text-muted:hover { color:#b4977a !important; }
+
+/* Form alanları – kahve odak rengi */
+.form-outline .form-control:focus { border-color:#7b5e57 !important; box-shadow:0 0 0 .2rem rgba(123,94,87,.25) !important; }
+
+/* Başlıklar */
+.auth-card h4 { font-weight:600; color:#4b3832; }
+
+/* Küçük ekran sağ paneli alta gelsin ama görünür kalsın */
+@media (max-width: 991.98px){
+  .auth-right-panel { padding:2rem 1.25rem; }
+  .auth-right-panel .panel-inner { max-width:100%; text-align:center; }
+}
+
+/* Metin okunabilirliği */
+.auth-right-panel .panel-inner h4 { font-weight:600; letter-spacing:.5px; }
+.auth-right-panel .panel-inner p { line-height:1.4; }
+
+/* İnce ayar */
+.auth-card img { filter: sepia(45%) hue-rotate(10deg) saturate(140%); }
+
+/* Input stilleri (MDB bağımlılığını azalt) */
+.coffee-input {
+  border:1px solid #cdb9b1;
+  background:#fff;
+  border-radius:.55rem;
+  transition:.2s ease;
+}
+.coffee-input:focus {
+  border-color:#7b5e57;
+  box-shadow:0 0 0 .2rem rgba(123,94,87,.25);
+}
+
+/* Form başlığı ayarı */
+.auth-heading {
+  font-weight:600;
+  letter-spacing:.5px;
+  color:#4b3832;
+}
+
+/* Scroll halinde arka plan */
+body { background:#3b2f2f; }
+
+/* Sağ panel metin okunabilirliği */
+.auth-right-panel h4 { text-shadow:0 2px 6px rgba(0,0,0,.4); }

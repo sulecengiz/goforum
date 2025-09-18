@@ -1,0 +1,71 @@
+/* GoForum Admin - Responsive Iyilestirmeler
+   Bu dosya tema kaynak dosyalarini bozmadan kucuk ekranda gerekli duzeltmeleri ekler.
+*/
+
+/* Hamburger ikonunun garanti sekilde görünmesi */
+#sidebarToggleTop i {
+  display: inline-block;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #4e73df;
+}
+#sidebarToggleTop:focus { outline: 2px solid #224abe; outline-offset: 2px; }
+
+/* 0 - 767px: Sidebar off-canvas yapiya cekilir */
+@media (max-width: 767.98px) {
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 1040;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    width: 14rem !important; /* Masaüstü genislik */
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  }
+  body.sidebar-toggled .sidebar { transform: translateX(0); }
+  #content-wrapper, #content { width: 100%; }
+  .sidebar .sidebar-brand-text { display: inline !important; }
+  /* Arka plan kaymasin */
+  body.sidebar-toggled { overflow: hidden; }
+}
+
+/* Küçük ekran padding ve topbar azaltma */
+@media (max-width: 575.98px) {
+  .container-fluid { padding-left: .75rem; padding-right: .75rem; }
+  .topbar { height: 3.5rem; }
+  .topbar .nav-item .nav-link { height: 3.5rem; }
+  form .form-group { margin-bottom: .85rem; }
+  .btn { padding: .5rem .9rem; font-size: .9rem; }
+}
+
+/* Orta ekranlarda  (tablet) ufak iyilestirme */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .card-body { padding: 1rem 1.15rem; }
+}
+
+/* Uzun tablolar için yatay kaydırma sarmalayıcı */
+.table-responsive-mobile { width: 100%; overflow-x: auto; }
+.table-responsive-mobile table { min-width: 640px; }
+
+/* Görseller tasmasin */
+img.responsive-img, .post-content img { max-width: 100%; height: auto; }
+
+/* Kelime tasmalarini kir */
+.text-break-word { word-break: break-word; overflow-wrap: break-word; }
+
+/* Summernote icindeki resimler de tasmasin */
+.note-editor .note-editable img { max-width: 100%; height: auto; }
+
+/* Yumusak gecisler */
+.sidebar, #sidebarToggleTop { -webkit-tap-highlight-color: transparent; }
+
+/* Yorum / uzun metin alanlari mobilde daha rahat okunsun */
+@media (max-width: 575.98px) {
+  .card .card-header { padding: .6rem .9rem; }
+  .card-body { padding: .9rem; }
+}
+
+/* Utility */
+.hide-desktop { display: none; }
+@media (max-width: 767.98px) { .hide-mobile { display: none !important; } .hide-desktop { display: block !important; } }
+

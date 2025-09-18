@@ -13,6 +13,82 @@
     /* Profil aksiyon butonlarını kompakt yap */
     .profile-action-btn { padding: 4px 10px; font-size: 12px; line-height: 1.2; border-radius: 6px; }
     .profile-action-btn i { margin-right: 4px; font-size: 12px; }
+
+    /* Responsive tasarım iyileştirmeleri */
+    @media (max-width: 768px) {
+        .profile-header {
+            margin-top: 60px;
+            padding: 2rem 0 !important;
+        }
+
+        .profile-header h1 {
+            font-size: 2rem;
+        }
+
+        .col-lg-4 {
+            margin-bottom: 3rem;
+        }
+
+        .col-lg-8 {
+            margin-bottom: 2rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .btn-group-vertical {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .btn-group-vertical .btn {
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+        }
+
+        .flex-grow-1 {
+            margin-bottom: 1rem;
+        }
+
+        .ms-3 {
+            margin-left: 0 !important;
+            margin-top: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .profile-header {
+            margin-top: 56px;
+            padding: 1.5rem 0 !important;
+        }
+
+        .profile-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .card {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h5 {
+            font-size: 1rem;
+        }
+
+        .profile-action-btn {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+        }
+
+        .border-bottom {
+            padding-bottom: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+    }
 </style>
 <!-- Page Header-->
 <header class="text-center py-5 profile-header" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">

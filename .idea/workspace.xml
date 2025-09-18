@@ -4,10 +4,24 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="initial read.me">
+    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="düzeltmeler">
+      <change afterPath="$PROJECT_DIR$/admin/assets/css/responsive-overrides.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/site/assets/css/auth.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/views/templates/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/head.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/views/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/navbar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/views/templates/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/sidebar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goforum.db" beforeDir="false" afterPath="$PROJECT_DIR$/goforum.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/assets/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/site/assets/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/homepage/detail/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/detail/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/homepage/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/list/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/homepage/list/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/list/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/profile/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/profile/saved-posts.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/saved-posts.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/templates/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/head.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/navbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/userops/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/userops/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/userops/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/userops/register.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +150,8 @@
     <MESSAGE value="kaydetme özelliği eklendi, isimler değişti" />
     <MESSAGE value="footer link güncellendi" />
     <MESSAGE value="initial read.me" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial read.me" />
+    <MESSAGE value="düzeltmeler" />
+    <option name="LAST_COMMIT_MESSAGE" value="düzeltmeler" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

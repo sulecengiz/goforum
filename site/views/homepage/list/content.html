@@ -14,6 +14,8 @@
         position:relative;
         padding-bottom:32px;
         margin-bottom:18px;
+        /* Kaydet yıldızı (save-star) ile başlık çakışmasın diye üst boşluk */
+        padding-top:40px; /* star ~24px + boşluk */
     }
     .post-preview h2 {
         margin-bottom:6px;
@@ -98,6 +100,41 @@
         border-radius: 12px;
         padding: 4px 12px;
         margin-left: auto;
+    }
+
+    /* Responsive tasarım iyileştirmeleri */
+    @media (max-width: 768px) {
+        .px-5 { padding-left: 1rem !important; padding-right: 1rem !important; }
+        .col-lg-4 { margin-bottom: 2rem; }
+        /* Kategori kartlarını daha kompakt yap */
+        .category-card {
+            flex-direction: row !important; /* Önceki column'u override et */
+            align-items: center;
+            text-align: left !important;
+            padding: 8px 12px !important;
+            gap: 6px !important;
+        }
+        .category-icon { font-size:1.1rem !important; margin:0 6px 0 2px !important; }
+        .category-title { font-size:0.9rem !important; font-weight:600; }
+        .category-badge { font-size:0.65rem !important; padding:2px 8px !important; margin-left:auto !important; margin-top:0 !important; }
+        .post-preview { padding-bottom:50px; }
+        .author-box { position: static; justify-content:flex-start; margin-top: 10px; }
+        .save-star { top:6px !important; right:6px !important; }
+        .save-star i { font-size:1.25rem !important; }
+    }
+
+    @media (max-width: 576px) {
+        .masthead { min-height: 300px !important; }
+        .site-heading h1 { font-size: 2rem; }
+        .site-heading .subheading { font-size: 1rem; }
+        .category-header { width: 100% !important; margin: 1rem 0 !important; }
+        .w-75 { width: 100% !important; }
+        .post-preview h2 { font-size: 1.35rem; }
+        .post-preview h3 { font-size: 0.85rem; }
+        /* Daha da kompakt kategori kartları */
+        .category-card { padding:6px 10px !important; gap:5px !important; }
+        .category-title { font-size:0.85rem !important; }
+        .category-badge { font-size:0.6rem !important; padding:2px 6px !important; }
     }
 </style>
 <!-- Page Header-->
