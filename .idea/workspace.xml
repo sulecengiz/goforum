@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="kaydetme özelliği eklendi, isimler değişti">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/footer.html" afterDir="false" />
-    </list>
+    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="footer link güncellendi" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,7 +130,8 @@
     <MESSAGE value="15 eylül" />
     <MESSAGE value="yıldız eklemeden önceki son hal" />
     <MESSAGE value="kaydetme özelliği eklendi, isimler değişti" />
-    <option name="LAST_COMMIT_MESSAGE" value="kaydetme özelliği eklendi, isimler değişti" />
+    <MESSAGE value="footer link güncellendi" />
+    <option name="LAST_COMMIT_MESSAGE" value="footer link güncellendi" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
