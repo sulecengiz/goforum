@@ -105,7 +105,23 @@ goforum/
 
 ## 🎨 Screenshots
 
-*Add screenshots of your application here*
+<img width="1905" height="944" alt="image" src="https://github.com/user-attachments/assets/fb5a93b9-3780-4b21-8877-65d0583b5173" />
+<img width="1905" height="942" alt="image" src="https://github.com/user-attachments/assets/f4d5e9fa-cdb8-4174-8cbf-70745fcfd02a" />
+<img width="1917" height="940" alt="image" src="https://github.com/user-attachments/assets/ac24db20-3b04-4eb6-9826-31917ab64c96" />
+<img width="1903" height="943" alt="image" src="https://github.com/user-attachments/assets/90f72fe0-5620-4c02-bbb2-84573147589e" />
+<img width="1906" height="942" alt="image" src="https://github.com/user-attachments/assets/26e811f6-28a3-4a23-9a25-6deec58576f9" />
+
+
+<img width="1917" height="942" alt="image" src="https://github.com/user-attachments/assets/d002c43c-96ec-48a1-9f31-ef66454eda42" />
+<img width="1912" height="944" alt="image" src="https://github.com/user-attachments/assets/2c4e23bd-d43b-44a7-b905-55915a24d512" />
+<img width="1917" height="941" alt="image" src="https://github.com/user-attachments/assets/dc727134-15ce-4d6d-a780-75cb0aeca7e1" />
+<img width="1918" height="940" alt="image" src="https://github.com/user-attachments/assets/13960010-295f-4d60-8a93-9055649f5980" />
+<img width="1904" height="946" alt="image" src="https://github.com/user-attachments/assets/c5f4c906-6545-4187-8ba9-fa5153512fcd" />
+
+
+
+
+
 
 ## 🔧 Configuration
 
