@@ -8,9 +8,14 @@
         0%, 80% { transform: rotate(0deg); }
         90%, 100% { transform: rotate(180deg); }
     }
+    /* Navbar fixed-top ile çakışmayı önle */
+    .profile-header { margin-top: 72px; }
+    /* Profil aksiyon butonlarını kompakt yap */
+    .profile-action-btn { padding: 4px 10px; font-size: 12px; line-height: 1.2; border-radius: 6px; }
+    .profile-action-btn i { margin-right: 4px; font-size: 12px; }
 </style>
 <!-- Page Header-->
-<header class="text-center py-5" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">
+<header class="text-center py-5 profile-header" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
@@ -40,7 +45,7 @@
                     <p><strong>Yorum Sayısı:</strong> {{ .CommentCount }}</p>
                     <p><strong>Üyelik Tarihi:</strong> {{ .User.CreatedAt.Format "02.01.2006" }}</p>
                     <hr style="border-color: #7b5e57;">
-                    <a href="/new-post" class="btn w-100" style="background: linear-gradient(90deg, #7b5e57, #a1866f); color: white; border: none;">
+                    <a href="/new-post" class="btn w-100 h-75 profile-action-btn" style="background: linear-gradient(90deg, #7b5e57, #a1866f); color: white; border: none; font-weight: 500 !important; line-height: 2;">
                         <i class="fas fa-plus me-2"></i>Yeni Blog Yazısı
                     </a>
                 </div>
@@ -66,6 +71,28 @@
                     {{ end }}
                 </div>
             </div>
+
+            <!-- Kaydettiğim Bloglar Card -->
+            <div class="card mt-4 shadow-sm" style="background-color: #5a4a42; border: none;">
+                <div class="card-header text-white" style="background: linear-gradient(90deg, #4b3832, #7b5e57);">
+                    <h5 class="mb-0"><i class="fas fa-star me-2" style="color:#FFD700;"></i>Kaydettiğim Bloglar</h5>
+                </div>
+                <div class="card-body" style="color: #f5deb3; max-height: 300px; overflow-y: auto;">
+                    {{ if .SavedBlogs }}
+                    {{ range .SavedBlogs }}
+                    <div class="border-bottom pb-2 mb-2" style="border-color: #7b5e57 !important;">
+                        <a href="/yazilar/{{ .Slug }}" class="d-block text-decoration-none" style="color:#FFD700;">
+                            <h6 class="mb-1" style="color:#FFD700;"><i class="fa fa-star"></i> {{ .Title }}</h6>
+                            <small style="color: #a1866f;">{{ getDate .CreatedAt }}</small>
+                        </a>
+                    </div>
+                    {{ end }}
+                    {{ else }}
+                    <p class="text-center" style="color: #a1866f;">Henüz blog kaydetmediniz.</p>
+                    {{ end }}
+                </div>
+            </div>
+            <!-- /Kaydettiğim Bloglar Card -->
         </div>
 
         <!-- Sağ Panel - Blog Yazıları -->
@@ -96,10 +123,10 @@
                                 </div>
                                 <div class="ms-3">
                                     <div class="btn-group-vertical">
-                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm mb-1" style="background-color:#a1866f; color:white; border:none;">
+                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm profile-action-btn mb-1" style="background-color:#a1866f; color:white; border:none; font-weight: 500 !important; line-height: 1.4;">
                                             <i class="fas fa-edit me-1"></i>Düzenle
                                         </a>
-                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm" style="background-color:#8b4513; color:white; border:none;" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
+                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm profile-action-btn" style="background-color:#8b4513; color:white; border:none; font-weight: 500 !important; line-height: 1.4;" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
                                             <i class="fas fa-trash me-1"></i>Sil
                                         </a>
                                     </div>
@@ -134,13 +161,13 @@
                                 </div>
                                 <div class="ms-3">
                                     <div class="btn-group-vertical">
-                                        <a href="/yazilar/{{ .Slug }}" class="btn btn-sm mb-1" style="background-color:#7b5e57; color:white; border:none;">
+                                        <a href="/yazilar/{{ .Slug }}" class="btn btn-sm profile-action-btn mb-1" style="background-color:#7b5e57; color:white; border:none; font-weight: 500 !important; line-height: 1.4;">
                                             <i class="fas fa-eye me-1"></i>Görüntüle
                                         </a>
-                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm mb-1" style="background-color:#a1866f; color:white; border:none;">
+                                        <a href="/edit-post/{{ .ID }}" class="btn btn-sm profile-action-btn mb-1" style="background-color:#a1866f; color:white; border:none; font-weight: 500 !important; line-height: 1.4">
                                             <i class="fas fa-edit me-1"></i>Düzenle
                                         </a>
-                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm" style="background-color:#8b4513; color:white; border:none;" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
+                                        <a href="/delete-post/{{ .ID }}" class="btn btn-sm profile-action-btn" style="background-color:#8b4513; color:white; border:none; font-weight: 500 !important; line-height: 1.4" onclick="return confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')">
                                             <i class="fas fa-trash me-1"></i>Sil
                                         </a>
                                     </div>

@@ -47,6 +47,11 @@ func Routes() *httprouter.Router {
 	// Yorum beğeni sistemi (conflict fix: önceki /yazilar/yorum/... wildcard slug ile çakışıyordu)
 	r.POST("/like-comment/:commentId", site.Homepage{}.ToggleLike)
 
+	// SavedPost (blog kaydetme) işlemleri
+	r.POST("/save-post/:postID", site.SavePost)
+	r.POST("/unsave-post/:postID", site.UnsavePost)
+	r.GET("/saved-posts", site.GetSavedPosts)
+
 	// Admin Routes
 	r.GET("/admin/login", admin.Userops{}.Index)
 	r.POST("/admin/do_login", admin.Userops{}.Login)

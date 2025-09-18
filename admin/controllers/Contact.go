@@ -6,6 +6,7 @@ import (
 	"goforum/site/models"
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -25,7 +26,7 @@ func (c Contact) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 	data := make(map[string]interface{})
-	data["Contacts"] = models.ContactForm{}.GetAll()
+	data["Contacts"] = models.Contact{}.GetAll()
 	data["Alert"] = map[string]interface{}{
 		"is_alert": helpers.GetAlert(w, r) != "",
 		"message":  helpers.GetAlert(w, r),
@@ -43,23 +44,30 @@ func (c Contact) Delete(w http.ResponseWriter, r *http.Request, params httproute
 
 	id := params.ByName("id")
 
-	// Önce kaydı bulmaya çalışın.
-	contact, err := models.ContactForm{}.Get(id)
+	// ID'yi uint'e çevir
+	contactID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
-		// Kayıt bulunamadıysa veya başka bir hata oluştuysa
-		helpers.SetAlert(w, r, "Kayıt bulunamadı veya bir hata oluştu: "+err.Error())
+		helpers.SetAlert(w, r, "Geçersiz ID formatı")
+		http.Redirect(w, r, "/admin/contact", http.StatusSeeOther)
+		return
+	}
+
+	// Contact modelini kullan
+	contact := models.Contact{}.Get(uint(contactID))
+	if contact.ID == 0 {
+		helpers.SetAlert(w, r, "Kayıt bulunamadı")
 		http.Redirect(w, r, "/admin/contact", http.StatusSeeOther)
 		return
 	}
 
 	// Kayıt başarıyla bulunduysa silme işlemini yapın.
-	err = contact.Delete()
+	err = models.Contact{}.Delete(uint(contactID))
 	if err != nil {
 		helpers.SetAlert(w, r, "Kayıt silinirken bir hata oluştu: "+err.Error())
 		http.Redirect(w, r, "/admin/contact", http.StatusSeeOther)
 		return
 	}
 
-	helpers.SetAlert(w, r, "Kayıt başarıyla silindi.")
+	helpers.SetAlert(w, r, "Kayıt başarıyla silindi")
 	http.Redirect(w, r, "/admin/contact", http.StatusSeeOther)
 }

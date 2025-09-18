@@ -27,6 +27,27 @@ func siteFuncMap() template.FuncMap {
 		"upper":        strings.ToUpper,
 		"getPostSlug":  func(id uint) string { return models.Post{}.Get(id).Slug },
 		"getPostTitle": func(id uint) string { return models.Post{}.Get(id).Title },
+		"html":         func(content string) template.HTML { return template.HTML(content) },
+		"substr": func(s string, start, length int) string {
+			if start >= len(s) {
+				return ""
+			}
+			end := start + length
+			if end > len(s) {
+				end = len(s)
+			}
+			return s[start:end]
+		},
+		"inSlice": func(slice []uint, item uint) bool {
+			for _, s := range slice {
+				if s == item {
+					return true
+				}
+			}
+			return false
+		},
+		"getUser": func(userID uint) models.User { return models.User{}.Get(userID) },
+		"isAdmin": func(userID uint) bool { return userID == 1 }, // Admin kontrolü
 	}
 }
 
@@ -40,7 +61,7 @@ func loadSiteTemplates(name string, files ...string) (*template.Template, error)
 type Homepage struct{}
 
 // Anasayfa
-func (homepage Homepage) Index(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (homepage Homepage) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	// Template setini oluştur (templates + homepage/list)
 	templateFiles := helpers.Include("templates")
 	listFiles := helpers.Include("homepage/list")
@@ -65,6 +86,14 @@ func (homepage Homepage) Index(w http.ResponseWriter, r *http.Request, params ht
 			r, _ := utf8.DecodeRuneInString(s)
 			return strings.ToUpper(string(r))
 		},
+		"inSlice": func(slice []uint, item uint) bool {
+			for _, s := range slice {
+				if s == item {
+					return true
+				}
+			}
+			return false
+		},
 	}).ParseFiles(templateFiles...)
 	if err != nil {
 		log.Printf("Template parse hatası: %v", err)
@@ -79,12 +108,23 @@ func (homepage Homepage) Index(w http.ResponseWriter, r *http.Request, params ht
 		user = nil
 	}
 
+	// Kullanıcının kaydettiği postların ID'lerini al
+	var savedPostIDs []uint
+	if user != nil {
+		savedPost := models.SavedPost{}
+		savedPosts := savedPost.GetByUser(user.ID)
+		for _, sp := range savedPosts {
+			savedPostIDs = append(savedPostIDs, sp.PostID)
+		}
+	}
+
 	categories := models.Category{}.GetAll()
 	data := map[string]interface{}{
 		"Posts":              models.Post{}.GetAll("approved = ?", true),
 		"User":               userStruct,
 		"Categories":         categories,
 		"totalCategoryPosts": countCategoryPosts(),
+		"SavedPostIDs":       savedPostIDs,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -101,6 +141,7 @@ func countComments(comments []*models.Comment) int {
 	}
 	return total
 }
+
 func countCategoryPosts() map[string]int {
 	categories := models.Category{}.GetAll()
 	counts := make(map[string]int, len(categories))
@@ -114,8 +155,8 @@ func countCategoryPosts() map[string]int {
 
 // Kategori sayfası
 func (homepage Homepage) Category(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	slug := params.ByName("slug")
-	category := models.Category{}.GetBySlug(slug)
+	slugParam := params.ByName("slug")
+	category := models.Category{}.GetBySlug(slugParam)
 	if category.ID == 0 {
 		http.NotFound(w, r)
 		return
@@ -146,6 +187,14 @@ func (homepage Homepage) Category(w http.ResponseWriter, r *http.Request, params
 			r, _ := utf8.DecodeRuneInString(s)
 			return strings.ToUpper(string(r))
 		},
+		"inSlice": func(slice []uint, item uint) bool {
+			for _, s := range slice {
+				if s == item {
+					return true
+				}
+			}
+			return false
+		},
 	}).ParseFiles(templateFiles...)
 	if err != nil {
 		log.Printf("Template parse hatası: %v", err)
@@ -154,12 +203,24 @@ func (homepage Homepage) Category(w http.ResponseWriter, r *http.Request, params
 	}
 
 	user, _ := helpers.GetCurrentUser(r)
+
+	// Kullanıcının kaydettiği postların ID'lerini al
+	var savedPostIDs []uint
+	if user != nil {
+		savedPost := models.SavedPost{}
+		savedPosts := savedPost.GetByUser(user.ID)
+		for _, sp := range savedPosts {
+			savedPostIDs = append(savedPostIDs, sp.PostID)
+		}
+	}
+
 	data := map[string]interface{}{
 		"Posts":              posts,
 		"User":               user,
 		"Categories":         models.Category{}.GetAll(),
 		"totalCategoryPosts": countCategoryPosts(),
 		"ActiveCategory":     category,
+		"SavedPostIDs":       savedPostIDs,
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -171,13 +232,15 @@ func (homepage Homepage) Category(w http.ResponseWriter, r *http.Request, params
 
 // Yazı detay sayfası
 func (homepage Homepage) Detail(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	slug := params.ByName("slug")
-	post := models.Post{}.Get("slug = ?", slug)
+	slugParam := params.ByName("slug")
+	post := models.Post{}.Get("slug = ?", slugParam)
 
 	user, _ := helpers.GetCurrentUser(r)
 	if post.ID == 0 || post.Title == "" || (!post.Approved && (user == nil || user.Role != 1) && !(user != nil && user.ID == post.AuthorID)) {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("404 - Yazı bulunamadı!"))
+		if _, err := w.Write([]byte("404 - Yazı bulunamadı!")); err != nil {
+			log.Printf("Write error: %v", err)
+		}
 		return
 	}
 
@@ -206,6 +269,16 @@ func (homepage Homepage) Detail(w http.ResponseWriter, r *http.Request, params h
 			return s[start:end]
 		},
 		"upper": func(s string) string { return strings.ToUpper(s) },
+		"inSlice": func(slice []uint, item uint) bool {
+			for _, s := range slice {
+				if s == item {
+					return true
+				}
+			}
+			return false
+		},
+		// Post içeriğini HTML olarak işlemek için helper
+		"html": func(content string) template.HTML { return template.HTML(content) },
 	}).ParseFiles(templateFiles...)
 
 	if err != nil {
@@ -214,11 +287,22 @@ func (homepage Homepage) Detail(w http.ResponseWriter, r *http.Request, params h
 		return
 	}
 
+	// Kullanıcının kaydettiği postların ID'lerini al
+	var savedPostIDs []uint
+	if user != nil {
+		savedPost := models.SavedPost{}
+		savedPosts := savedPost.GetByUser(user.ID)
+		for _, sp := range savedPosts {
+			savedPostIDs = append(savedPostIDs, sp.PostID)
+		}
+	}
+
 	data := map[string]interface{}{
 		"Post":          post,
 		"Comments":      rootComments,
 		"TotalComments": countComments(rootComments),
 		"User":          user,
+		"SavedPostIDs":  savedPostIDs,
 	}
 
 	err = view.ExecuteTemplate(w, "index", data)
@@ -265,7 +349,7 @@ func annotateComments(list []*models.Comment, user *models.User) {
 	}
 }
 
-func (homepage Homepage) About(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (homepage Homepage) About(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	partials := helpers.Include("templates")
 	aboutFiles := helpers.Include("about")
 	all := append(partials, aboutFiles...)
@@ -288,10 +372,13 @@ func (homepage Homepage) About(w http.ResponseWriter, r *http.Request, params ht
 		"About": about,
 		"User":  user,
 	}
-	view.ExecuteTemplate(w, "index", data)
+	if err = view.ExecuteTemplate(w, "index", data); err != nil {
+		log.Printf("Template execute hatası: %v", err)
+		http.Error(w, "Template render hatası", http.StatusInternalServerError)
+	}
 }
 
-func (homepage Homepage) Contact(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+func (homepage Homepage) Contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	partials := helpers.Include("templates")
 	contactFiles := helpers.Include("contact")
 	all := append(partials, contactFiles...)
@@ -305,18 +392,21 @@ func (homepage Homepage) Contact(w http.ResponseWriter, r *http.Request, params 
 	data := map[string]interface{}{
 		"User": user,
 	}
-	view.ExecuteTemplate(w, "index", data)
+	if err = view.ExecuteTemplate(w, "index", data); err != nil {
+		log.Printf("Template execute hatası: %v", err)
+		http.Error(w, "Template render hatası", http.StatusInternalServerError)
+	}
 }
 
-// Login / Register / Logout fonksiyonları zaten session ile çalışıyor, onları değiştirmene gerek yok
-
 func (homepage Homepage) AddComment(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	slug := params.ByName("slug")
-	post := models.Post{}.Get("slug = ?", slug)
+	slugParam := params.ByName("slug")
+	post := models.Post{}.Get("slug = ?", slugParam)
 
 	if post.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Yazı bulunamadı!"))
+		if _, err := w.Write([]byte("Yazı bulunamadı!")); err != nil {
+			log.Printf("Write error: %v", err)
+		}
 		return
 	}
 
@@ -354,10 +444,10 @@ func (homepage Homepage) AddComment(w http.ResponseWriter, r *http.Request, para
 		log.Println("Yorum eklenirken hata:", err)
 	}
 
-	http.Redirect(w, r, "/yazilar/"+slug, http.StatusSeeOther)
+	http.Redirect(w, r, "/yazilar/"+slugParam, http.StatusSeeOther)
 }
 
-func (homepage Homepage) Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (homepage Homepage) Login(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	view, err := loadSiteTemplates("layout", "site/views/userops/login.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -413,14 +503,17 @@ func (homepage Homepage) LoginPost(w http.ResponseWriter, r *http.Request, _ htt
 
 	// Başarısız giriş
 	view, _ := loadSiteTemplates("layout", "site/views/userops/login.html")
-	view.ExecuteTemplate(w, "layout", map[string]interface{}{
+	if err := view.ExecuteTemplate(w, "layout", map[string]interface{}{
 		"Title":     "Giriş Yap",
 		"Error":     "Kullanıcı adı veya şifre hatalı",
 		"BodyClass": "auth-body",
-	})
+	}); err != nil {
+		log.Printf("Template execute hatası: %v", err)
+		http.Error(w, "Template render hatası", http.StatusInternalServerError)
+	}
 }
 
-func (homepage Homepage) Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (homepage Homepage) Register(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
 	view, err := loadSiteTemplates("layout", "site/views/userops/register.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -452,11 +545,14 @@ func (homepage Homepage) RegisterPost(w http.ResponseWriter, r *http.Request, _ 
 
 	if err := user.Register(); err != nil {
 		view, _ := loadSiteTemplates("layout", "site/views/userops/register.html")
-		view.ExecuteTemplate(w, "layout", map[string]interface{}{
+		if execErr := view.ExecuteTemplate(w, "layout", map[string]interface{}{
 			"Title":     "Kayıt Ol",
 			"Error":     "Kayıt işlemi başarısız: " + err.Error(),
 			"BodyClass": "auth-body",
-		})
+		}); execErr != nil {
+			log.Printf("Template execute hatası: %v", execErr)
+			http.Error(w, "Template render hatası", http.StatusInternalServerError)
+		}
 		return
 	}
 
@@ -471,7 +567,9 @@ func (homepage Homepage) RegisterPost(w http.ResponseWriter, r *http.Request, _ 
 		session.Values["userID"] = dbUser.ID
 		session.Values["username"] = dbUser.Username
 		session.Values["role"] = dbUser.Role
-		session.Save(r, w)
+		if err := session.Save(r, w); err != nil {
+			log.Printf("Session kaydetme hatası: %v", err)
+		}
 	}
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -488,7 +586,9 @@ func (homepage Homepage) Logout(w http.ResponseWriter, r *http.Request, _ httpro
 	// Ya da session'ı tamamen temizle
 	session.Values = make(map[interface{}]interface{})
 
-	session.Save(r, w)
+	if err := session.Save(r, w); err != nil {
+		log.Printf("Session kaydetme hatası: %v", err)
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
@@ -512,9 +612,18 @@ func (homepage Homepage) Profile(w http.ResponseWriter, r *http.Request, _ httpr
 			pendingPosts = append(pendingPosts, p)
 		}
 	}
-	postCount := models.Post{}.CountByAuthor(user.ID)
-	commentCount := models.Comment{}.CountByUser(user.ID)
-	userComments := models.Comment{}.GetUserComments(user.ID)
+	userComments := models.Comment{}.GetByUser(user.ID)
+
+	// Kullanıcının kaydettiği blogları getir
+	var savedPosts []models.SavedPost
+	var savedBlogs []models.Post
+	models.GetDB().Where("user_id = ?", user.ID).Find(&savedPosts)
+	for _, sp := range savedPosts {
+		var post models.Post
+		if err := models.GetDB().First(&post, sp.PostID).Error; err == nil && post.ID != 0 {
+			savedBlogs = append(savedBlogs, post)
+		}
+	}
 
 	view, err := loadSiteTemplates("layout", "site/views/profile/profile.html")
 	if err != nil {
@@ -529,10 +638,13 @@ func (homepage Homepage) Profile(w http.ResponseWriter, r *http.Request, _ httpr
 		"Posts":         userPosts,
 		"ApprovedPosts": approvedPosts,
 		"PendingPosts":  pendingPosts,
-		"PostCount":     postCount,
-		"CommentCount":  commentCount,
-		"UserComments":  userComments,
 		"Categories":    models.Category{}.GetAll(),
+		"SavedBlogs":    savedBlogs,
+		"Comments":      userComments,
+		// Eklendi:
+		"UserComments": userComments,
+		"PostCount":    len(userPosts),
+		"CommentCount": len(userComments),
 	}
 
 	if err = view.ExecuteTemplate(w, "layout", data); err != nil {
@@ -596,13 +708,17 @@ func (homepage Homepage) CreatePost(w http.ResponseWriter, r *http.Request, _ ht
 	var picture_url string
 
 	// Fotoğraf yükleme işlemi
-	r.ParseMultipartForm(10 << 20)
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		log.Printf("ParseMultipartForm hatası: %v", err)
+	}
 	file, header, err := r.FormFile("blog-picture")
 	if err != nil {
 		// Fotoğraf yüklenmemişse varsayılan resim kullan
 		picture_url = ""
 	} else {
-		defer file.Close()
+		if closeErr := file.Close(); closeErr != nil {
+			log.Printf("File close hatası: %v", closeErr)
+		}
 
 		// Dosyayı kaydet
 		f, err := os.OpenFile("uploads/"+header.Filename, os.O_WRONLY|os.O_CREATE, 0666)
@@ -610,7 +726,9 @@ func (homepage Homepage) CreatePost(w http.ResponseWriter, r *http.Request, _ ht
 			log.Printf("Dosya açılırken hata: %v", err)
 			picture_url = ""
 		} else {
-			defer f.Close()
+			if closeErr := f.Close(); closeErr != nil {
+				log.Printf("File close hatası: %v", closeErr)
+			}
 			_, err = io.Copy(f, file)
 			if err != nil {
 				log.Printf("Dosya kopyalanırken hata: %v", err)
@@ -725,10 +843,14 @@ func (homepage Homepage) UpdatePost(w http.ResponseWriter, r *http.Request, para
 	// Resim (opsiyonel)
 	pictureURL := existingPost.Picture_url
 	if file, header, ferr := r.FormFile("blog-picture"); ferr == nil {
-		defer file.Close()
+		if closeErr := file.Close(); closeErr != nil {
+			log.Printf("File close hatası: %v", closeErr)
+		}
 		out, oerr := os.OpenFile("uploads/"+header.Filename, os.O_CREATE|os.O_WRONLY, 0666)
 		if oerr == nil {
-			defer out.Close()
+			if closeErr := out.Close(); closeErr != nil {
+				log.Printf("File close hatası: %v", closeErr)
+			}
 			if _, cerr := io.Copy(out, file); cerr == nil {
 				pictureURL = "uploads/" + header.Filename
 			}
@@ -790,14 +912,18 @@ func (homepage Homepage) ToggleLike(w http.ResponseWriter, r *http.Request, para
 	user, err := helpers.GetCurrentUser(r)
 	if err != nil || user == nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"success":false,"error":"giris gerekli"}`))
+		if _, writeErr := w.Write([]byte(`{"success":false,"error":"giris gerekli"}`)); writeErr != nil {
+			log.Printf("Write error: %v", writeErr)
+		}
 		return
 	}
 
 	commentID64, err := strconv.ParseUint(params.ByName("commentId"), 10, 32)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"success":false,"error":"gecersiz yorum id"}`))
+		if _, writeErr := w.Write([]byte(`{"success":false,"error":"gecersiz yorum id"}`)); writeErr != nil {
+			log.Printf("Write error: %v", writeErr)
+		}
 		return
 	}
 	commentID := uint(commentID64)
@@ -806,7 +932,9 @@ func (homepage Homepage) ToggleLike(w http.ResponseWriter, r *http.Request, para
 	var c models.Comment
 	if err := models.GetDB().First(&c, commentID).Error; err != nil || c.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"success":false,"error":"yorum bulunamadi"}`))
+		if _, writeErr := w.Write([]byte(`{"success":false,"error":"yorum bulunamadi"}`)); writeErr != nil {
+			log.Printf("Write error: %v", writeErr)
+		}
 		return
 	}
 
@@ -816,10 +944,14 @@ func (homepage Homepage) ToggleLike(w http.ResponseWriter, r *http.Request, para
 		log.Printf("ToggleLike hata user=%d comment=%d err=%v", user.ID, commentID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		// Kullanıcıya genel mesaj, log'da detay var
-		w.Write([]byte(`{"success":false,"error":"begeni islem hatasi"}`))
+		if _, writeErr := w.Write([]byte(`{"success":false,"error":"begeni islem hatasi"}`)); writeErr != nil {
+			log.Printf("Write error: %v", writeErr)
+		}
 		return
 	}
 
 	likeCount := models.Like{}.GetLikeCount(commentID)
-	w.Write([]byte(fmt.Sprintf(`{"success":true,"likeCount":%d,"isLiked":%t}`, likeCount, isLiked)))
+	if _, writeErr := w.Write([]byte(fmt.Sprintf(`{"success":true,"likeCount":%d,"isLiked":%t}`, likeCount, isLiked))); writeErr != nil {
+		log.Printf("Write error: %v", writeErr)
+	}
 }

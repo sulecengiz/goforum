@@ -1,16 +1,55 @@
 {{ define "content" }}
 <style>
     .masthead{
-        background-image: url('/assets/assets/img/home-bg.jpg');
+        background-image: url('/assets/assets/img/newpost.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 300px;
         transform: scaleX(-1);
     }
     .page-heading{
         transform: scaleX(-1);
     }
+    .modern-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 10px 24px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        letter-spacing: 0.01em;
+    }
+    .modern-btn-back {
+        background: linear-gradient(90deg, #e0e0e0, #bdbdbd);
+        color: #333;
+    }
+    .modern-btn-back:hover {
+        background: linear-gradient(90deg, #bdbdbd, #757575);
+        color: #fff;
+    }
+    .modern-btn-save {
+        background: linear-gradient(90deg, #7b5e57, #cbb682);
+        color: #fff;
+        min-width: 120px;
+    }
+    .modern-btn-save:hover {
+        background: linear-gradient(90deg, #a1866f, #7b5e57);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(203,182,130,0.15);
+    }
+    .modern-btn i {
+        font-size: 1.1em;
+        margin-right: 4px;
+    }
 </style>
 <!-- Page Header-->
 <header class="masthead" >
-    <div class="container position-relative px-4 px-lg-5">
+    <div class="container position-relative px-4 px-lg-5 ">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="page-heading" style="color: #1a1a1a">
@@ -62,12 +101,12 @@
                             <textarea class="form-control" id="post_content" name="content" rows="15" required placeholder="Blog yazınızın içeriğini girin"></textarea>
                         </div>
 
-                        <div class="form-group d-flex justify-content-between">
-                            <a href="/profile" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left mr-2"></i>Geri Dön
+                        <div class="form-group d-flex justify-content-between align-items-center mt-4">
+                            <a href="/profile" class="modern-btn modern-btn-back">
+                                <i class="fas fa-arrow-left"></i> Geri Dön
                             </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save mr-2"></i>Blog Yazısını Kaydet
+                            <button type="submit" class="modern-btn modern-btn-save">
+                                <i class="fas fa-save"></i> Blog Yazısını Kaydet
                             </button>
                         </div>
                     </form>

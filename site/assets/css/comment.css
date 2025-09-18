@@ -17,7 +17,7 @@
 /* Yorum header (isim ve tarih) */
 .comment-header {
     display: flex;
-    justify-content: between;
+    justify-content: space-between; /* justify-content: between → space-between */
     align-items: center;
     margin-bottom: 12px;
 }
@@ -39,12 +39,14 @@
     font-size: 14px;
     line-height: 1.5;
     margin-bottom: 12px;
+    word-break: break-word; /* HTML'den taşınan stil */
 }
 
 /* Mention styling */
 .comment-mention {
     color: #3b82f6;
     font-weight: 600;
+    margin-right: 5px; /* HTML'den taşınan stil */
 }
 
 /* Yorum aksiyonları (Like, Reply) */
@@ -69,6 +71,67 @@
 .comment-action-btn:hover {
     background: #e5e7eb;
     color: #374151;
+}
+
+/* Like button özel stilleri */
+.like-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    color: #6b7280; /* Varsayılan renk */
+    transition: all 0.2s ease;
+}
+
+.like-btn:hover {
+    color: #b3005b;
+}
+
+.like-btn:disabled {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+/* Beğenilmiş durumu */
+.like-btn.liked {
+    color: #ff0080;
+}
+
+.like-btn.liked .like-icon {
+    color: #e0245e;
+}
+
+/* Like sayacı ve etiket */
+.like-count {
+    font-size: 0.85rem;
+    margin-left: 4px;
+    color: #555;
+}
+
+.like-label {
+    font-size: 0.75rem;
+    margin-left: 6px;
+    color: #666;
+}
+
+/* Margin utility (Bootstrap benzeri) */
+.me-2 {
+    margin-right: 0.5rem;
+}
+
+/* Font Awesome icon placeholder stilleri */
+.fa-heart, .fa-reply {
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.fas {
+    font-weight: 900;
+}
+
+.far {
+    font-weight: 400;
 }
 
 /* Alt yorumlar container */
@@ -217,7 +280,7 @@
 .comment-form-container input[type="text"]:focus,
 .comment-form-container textarea:focus {
     outline: none;
-    border-color:rgba(221, 216, 203, 0.86);
+    border-color: rgba(221, 216, 203, 0.86);
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.11);
 }
 
@@ -248,35 +311,21 @@
 }
 
 #cancel-reply {
-    background: none;
-    border: none;
     background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 0%, rgba(113, 97, 91, 0.86) 100%);
     color: #ffffff;
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s ease;
+    border: none;
 }
 
 #cancel-reply:hover {
     background: linear-gradient(135deg, rgba(191, 180, 165, 0.86) 100%, rgba(113, 97, 91, 0.86) 0%);
 }
 
-/* Responsive */
+/* Responsive form */
 @media (max-width: 768px) {
     .comment-form-container {
         padding: 0 16px;
     }
-}
-.comment-action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-
-}
-.like-btn:hover {
-    color: #b3005b;  /* Fare üzerine gelince renk */
-}
-/* Beğenilmiş ikonun stilini belirlemek için */
-.like-btn {
-    color: #ff0080; /* Beğenildiğinde kırmızı */
 }

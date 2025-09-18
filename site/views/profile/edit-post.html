@@ -1,6 +1,8 @@
 {{ define "content" }}
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <!-- Page Header-->
+<br>
+<br>
 <header class="text-center py-5" style="background: linear-gradient(135deg, #4b3832, #7b5e57, #a1866f);">
     <div class="container">
         <div class="row justify-content-center">
@@ -17,7 +19,7 @@
     <div class="row gx-4 gx-lg-5 justify-content-center">
         <div class="col-md-10 col-lg-8 col-xl-7">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-dark text-white">
                     <h5 class="mb-0"><i class="fas fa-edit mr-2"></i>Blog Yazısını Düzenle</h5>
                 </div>
                 <div class="card-body">
@@ -64,12 +66,12 @@
                             <small class="text-muted">Boş bırakırsanız mevcut görsel korunur.</small>
                         </div>
 
-                        <div class="form-group d-flex justify-content-between">
-                            <a href="/profile" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left mx-1"></i>Geri Dön
+                        <div class="form-group d-flex justify-content-between align-items-center mt-4">
+                            <a href="/profile" class="modern-btn modern-btn-back">
+                                <i class="fas fa-arrow-left"></i> Geri Dön
                             </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save mx-1"></i> Değişiklikleri Kaydet
+                            <button type="submit" class="modern-btn modern-btn-save">
+                                <i class="fas fa-save"></i> Kaydet
                             </button>
                         </div>
                     </form>
@@ -101,4 +103,43 @@
    });
  });
 </script>
+
+<style>
+    .modern-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 10px 24px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        letter-spacing: 0.01em;
+    }
+    .modern-btn-back {
+        background: linear-gradient(90deg, #e0e0e0, #bdbdbd);
+        color: #333;
+    }
+    .modern-btn-back:hover {
+        background: linear-gradient(90deg, #bdbdbd, #757575);
+        color: #fff;
+    }
+    .modern-btn-save {
+        background: linear-gradient(90deg, #7b5e57, #cbb682);
+        color: #fff;
+        min-width: 120px;
+    }
+    .modern-btn-save:hover {
+        background: linear-gradient(90deg, #a1866f, #7b5e57);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(203,182,130,0.15);
+    }
+    .modern-btn i {
+        font-size: 1.1em;
+        margin-right: 4px;
+    }
+</style>
 {{ end }}

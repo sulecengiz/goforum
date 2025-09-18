@@ -18,8 +18,9 @@ func main() {
 	site_models.Post{}.Migrate()
 	site_models.Comment{}.Migrate()
 	site_models.Like{}.Migrate()
-	site_models.ContactForm{}.Migrate()
+	site_models.Contact{}.Migrate()
 	site_models.About{}.Migrate()
+	site_models.SavedPost{}.Migrate()
 
 	// Eski admin (author_id=0 veya admin kullanıcı) postlarını onayla
 	site_models.BackfillAdminPosts()

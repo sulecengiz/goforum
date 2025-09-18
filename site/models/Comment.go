@@ -16,6 +16,7 @@ type Comment struct {
 	Name       string
 	Comment    string
 	CreatedAt  time.Time
+	Level      int        `gorm:"-"` // Yorum seviyesi (nested level)
 	Replies    []*Comment `gorm:"-"`
 	ParentName string     `gorm:"-"`
 	LikeCount  int64      `gorm:"-"`
@@ -41,6 +42,7 @@ func (c *Comment) GetCommentTree(postID int) ([]*Comment, error) {
 		return nil, err
 	}
 	for _, root := range comments {
+		root.Level = 0 // Root comments have level 0
 		if err := c.loadReplies(db, root); err != nil {
 			return nil, err
 		}
@@ -54,34 +56,40 @@ func (c *Comment) loadReplies(db *gorm.DB, parent *Comment) error {
 	if err := db.Where("parent_id = ?", parent.ID).Order("created_at ASC").Find(&replies).Error; err != nil {
 		return err
 	}
-	parent.Replies = replies
-	for _, r := range replies {
-		if err := c.loadReplies(db, r); err != nil {
+	for _, reply := range replies {
+		reply.Level = parent.Level + 1 // Set level based on parent
+		if err := c.loadReplies(db, reply); err != nil {
 			return err
 		}
 	}
+	parent.Replies = replies
 	return nil
 }
 
-// Kullanıcının yorumları
-func (c Comment) GetUserComments(userID uint) []Comment {
-	var list []Comment
-	GetDB().Where("user_id = ?", userID).Order("created_at DESC").Find(&list)
-	return list
-}
-
-// Kullanıcının yorum sayısı
-func (c Comment) CountUserComments(userID uint) int64 {
-	var cnt int64
-	GetDB().Model(&Comment{}).Where("user_id = ?", userID).Count(&cnt)
-	return cnt
+// Yorum sayısını getir
+func (c *Comment) GetCommentCount(postID int) (int64, error) {
+	var count int64
+	if err := GetDB().Model(&Comment{}).Where("post_id = ?", postID).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 // Yorumu sil
-func (c Comment) Delete(commentID uint) error { return GetDB().Delete(&Comment{}, commentID).Error }
+func (c *Comment) DeleteComment(id int) error {
+	return GetDB().Delete(&Comment{}, id).Error
+}
 
-func (c Comment) CountByUser(id uint) interface{} {
-	var count int64
-	GetDB().Model(&Comment{}).Where("user_id = ?", id).Count(&count)
-	return count
+// Yorum güncelle
+func (c *Comment) UpdateComment() error {
+	return GetDB().Save(c).Error
+}
+
+func (c Comment) GetByUser(id uint) []Comment {
+	var comments []Comment
+	if err := GetDB().Where("user_id = ?", id).Find(&comments).Error; err != nil {
+		return nil
+	}
+	return comments
+
 }

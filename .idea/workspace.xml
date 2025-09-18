@@ -4,51 +4,34 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="15 eylül">
-      <change afterPath="$PROJECT_DIR$/admin/views/comment/comments/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/list/content.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/list/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/postdetail/content.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/postdetail/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/posts/content.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/admin/views/users/posts/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/site/models/Like.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/site/views/profile/edit-post.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/site/views/profile/new-post.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/site/views/profile/profile.html" afterDir="false" />
+    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/site/assets/assets/img/newpost.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/site/controllers/SavedPost_controller.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/site/models/SavedPost.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/controllers/Comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/controllers/Comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/controllers/Dashboard.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/controllers/Dashboard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/controllers/Userops.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/controllers/Userops.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/helpers/Auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/helpers/Auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/Categories_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/Categories_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/Comment_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/Comment_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/Like_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/Like_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/Role.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/Role.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/Users_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/Users_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/models/post_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/models/post_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/comment/comments/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/comment/comments/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/dashboard/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/dashboard/list/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/templates/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/sidebar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/controllers/Contact.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/controllers/Contact.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/Routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/Routes.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/goforum.db" beforeDir="false" afterPath="$PROJECT_DIR$/goforum.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/goforum.exe" beforeDir="false" afterPath="$PROJECT_DIR$/goforum.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/assets/js/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/site/assets/js/scripts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/assets/css/comment.css" beforeDir="false" afterPath="$PROJECT_DIR$/site/assets/css/comment.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/controllers/Contact_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/controllers/Contact_controller.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/controllers/Homepage.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/controllers/Homepage.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/models/About.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/About.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/models/Categories_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/Categories_model.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/models/Comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/Comment.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/models/Contact_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/Contact_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/models/Posts_model.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/Posts_model.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/about/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/about/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/contact/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/contact/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/models/Database.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/Database.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/homepage/detail/comments.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/detail/comments.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/homepage/detail/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/detail/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/homepage/detail/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/detail/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/homepage/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/list/content.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/profile/edit-post.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/edit-post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/profile/new-post.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/new-post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/profile/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/site/views/templates/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/head.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/templates/layout.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/layout.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/navbar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/templates/scripts.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/scripts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.db" beforeDir="false" afterPath="$PROJECT_DIR$/test.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uploads/1111.webp" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,31 +65,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;Go Build.go build goforum.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Selly/Desktop/goforum/admin/views/users&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Go Build.go build goforum.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboarding": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "master",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "C:/Users/Selly/Desktop/goforum/site/assets/assets/img",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Selly\Desktop\goforum\site\assets\assets\img" />
       <recent name="C:\Users\Selly\Desktop\goforum\admin\views\users" />
     </key>
   </component>

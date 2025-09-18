@@ -1,5 +1,5 @@
 {{ define "content" }}
-<header class="masthead" style="background-image: url('/{{ .Post.Picture_url }}')">
+<header class="masthead" style="background-image: url(/{{ .Post.Picture_url }})">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
@@ -7,154 +7,232 @@
                 <div class="post-heading">
                     <h1>{{ .Post.Title }}</h1>
                     <h2 class="subheading">{{ .Post.Description }}</h2>
+                    <span class="meta">Posted on {{ .Post.CreatedAt.Format "January 2, 2006" }}</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Star ikonu header'ın hemen altında -->
+{{ if .User }}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="text-end mb-3">
+                <span class="save-star" data-postid="{{ .Post.ID }}" style="cursor:pointer;">
+                    {{ if (inSlice .SavedPostIDs .Post.ID) }}
+                        <i class="fa-solid fa-star" style="font-size:2rem;color:#FFD700;"></i>
+                    {{ else }}
+                        <i class="fa-regular fa-star" style="font-size:2rem;color:#bbb;"></i>
+                    {{ end }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+<!-- Post Content-->
 <article>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
-                <!-- Blog İçerik -->
-                <div id="blog-content" class="blog-content mb-5">{{ .Post.Content }}</div>
-
-                <!-- Yorumlar -->
-                <div class="comments-section">
-                    <h3 class="mb-4">Yorumlar ({{ .TotalComments }})</h3>
-
-                    <!-- Yorum Formu -->
-                    <div class="comment-form-container mt-5">
-                        {{ if .User }}
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title mb-4" id="form-title">Yorum Yap</h4>
-                                <form id="comment-form" action="/yazilar/{{ .Post.Slug }}/yorum-ekle" method="POST">
-                                    <input type="hidden" name="parent_id" id="parent-id-input">
-                                    <div class="mb-3">
-
-                                        <input type="text" class="form-control" id="name" name="name" value="{{ .User.Username }}" readonly>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="comment" class="form-label" style="font-size: smaller">Yorumunuz</label>
-                                        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <button type="submit" class="btn btn-primary">Gönder</button>
-                                        <button type="button" id="cancel-reply" class="btn btn-primary" style="display: none;">
-                                            Yanıtı İptal Et
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        {{ else }}
-                        <div class="alert" style="background-color: rgba(138,109,59,0.83)">
-                            Yorum yapabilmek için lütfen <a href="/login">giriş yapın</a> veya <a href="/register">kayıt olun</a>.
-                        </div>
-                        {{ end }}
-                    </div>
-                    <!-- Yorum Listesi -->
-                    <div class="comment-list">
-                        {{ if .Comments }}
-                        {{ template "renderComment" .Comments }}
-                        {{ else }}
-                        <div class="alert" style="background-color: rgba(193,164,125,0.25); color: #49391e">Henüz yorum yapılmamış. İlk yorumu siz yapın!</div>
-                        {{ end }}
-                    </div>
-                </div> <!-- comments-section -->
+                <div class="post-content">
+                    {{ .Post.Content | html }}
+                </div>
             </div>
         </div>
     </div>
 </article>
+
+<!-- Comments Section -->
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+            <h3>Yorumlar ({{ .TotalComments }})</h3>
+
+            <!-- Comment Form -->
+            {{ if .User }}
+            <div class="comment-form-container">
+                <div class="card">
+                    <h4>Yorum Yap</h4>
+                    <!-- Yanıt bağlamı bilgisi -->
+                    <div id="reply-context" class="reply-context-hidden" style="margin-bottom:8px; font-size:13px; color:#6b7280;">
+                        <span id="replying-to"></span>
+                    </div>
+                    <form id="main-comment-form" action="/yazilar/{{ .Post.Slug }}/yorum-ekle" method="POST">
+                        <input type="hidden" id="parent_id" name="parent_id" value="">
+                        <div class="form-group mb-3">
+                            <input type="text" id="name" name="name" value="{{ .User.Username }}" placeholder="Adınız" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <textarea id="comment" name="comment" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2" id="comment-form-actions">
+                            <div></div>
+                            <div class="d-flex gap-2">
+                                <button type="button" id="cancel-reply" class="modern-cancel-btn reply-context-hidden">İptal</button>
+                                <button type="submit" class="modern-submit-btn">Yorum Gönder</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {{ else }}
+            <p><a href="/login">Giriş yapın</a> veya <a href="/register">kayıt olun</a> to leave a comment.</p>
+            {{ end }}
+
+            <!-- Comments List -->
+            <div class="comments-section mt-4">
+                {{ template "renderComment" .Comments }}
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Yukarı Çık Butonu -->
-<button id="back-to-top" class="btn btn-primary"
-        style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 999; border-radius: 40%; background-color: #8a6d3b; border-color: #8a6d3b;">
+<button id="back-to-top" class="btn"
+        style="position: fixed; bottom: 20px; right: 20px; display: none; z-index: 999; border-radius: 40%; background-color: #baa788; border-color: #baa788;">
     <i class="fas fa-arrow-up"></i>
 </button>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const backToTopBtn = document.getElementById("back-to-top");
-
-        // Scroll eventini dinle
-        window.addEventListener("scroll", function() {
-            if (window.scrollY > 300) {
-                backToTopBtn.style.display = "block"; // göster
-            } else {
-                backToTopBtn.style.display = "none";  // gizle
-            }
-        });
-
-        // Butona tıklayınca yukarıya kaydır
-        backToTopBtn.addEventListener("click", function() {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-
-        // Blog içeriğini set et
-        const blogContent = document.getElementById("blog-content");
-        if (blogContent) {
-            blogContent.innerHTML = `{{ .Post.Content }}`;
-        }
-
-        // Alt yorumları göster/gizle butonları
-        document.querySelectorAll('.toggle-replies-btn').forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const targetDiv = document.getElementById(targetId);
-                    if (!targetDiv) return;
-
-                    if (targetDiv.style.display === 'none' || targetDiv.style.display === '') {
-                        targetDiv.style.display = 'block';
-                        this.textContent = this.textContent.replace('Göster', 'Gizle');
-                    } else {
-                        targetDiv.style.display = 'none';
-                        this.textContent = this.textContent.replace('Gizle', 'Göster');
-                    }
-                });
-            }
-        });
-
-        // Yorum formu elementlerini kontrol et
-        const commentForm = document.getElementById('comment-form');
-        if (commentForm) {
-            const parentIdInput = document.getElementById('parent-id-input');
-            const commentTextarea = document.getElementById('comment');
-            const formTitle = document.getElementById('form-title');
-            const cancelReplyBtn = document.getElementById('cancel-reply');
-
-            // Yanıtla butonları
-            document.querySelectorAll('.reply-btn').forEach(button => {
-                if (button) {
-                    button.addEventListener('click', function() {
-                        const commentId = this.getAttribute('data-comment-id');
-                        const replyTo = this.getAttribute('data-reply-to');
-
-                        if (parentIdInput) parentIdInput.value = commentId;
-                        if (commentTextarea) commentTextarea.placeholder = `@${replyTo} kullanıcısına yanıtınızı yazın...`;
-                        if (formTitle) formTitle.textContent = `@${replyTo} kullanıcısına yanıt yazıyorsunuz`;
-                        if (cancelReplyBtn) cancelReplyBtn.style.display = 'inline-block';
-
-                        commentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        if (commentTextarea) commentTextarea.focus();
-                    });
-                }
-            });
-
-            if (cancelReplyBtn) {
-                cancelReplyBtn.addEventListener('click', function() {
-                    if (parentIdInput) parentIdInput.value = '';
-                    if (commentTextarea) {
-                        commentTextarea.placeholder = 'Yorumunuzu yazın...';
-                        commentTextarea.focus();
-                    }
-                    if (formTitle) formTitle.textContent = 'Yorum Yap';
-                    cancelReplyBtn.style.display = 'none';
-                });
-            }
+(function(){
+    const backToTopBtn = document.getElementById("back-to-top");
+    // Scroll eventini dinle
+    window.addEventListener("scroll", function() {
+        if (window.scrollY > 300) {
+            backToTopBtn.style.display = "block"; // göster
+        } else {
+            backToTopBtn.style.display = "none";  // gizle
         }
     });
+    // Butona tıklayınca yukarıya kaydır
+    backToTopBtn.addEventListener("click", function() {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    if(window.jQuery){
+        // Reply butonu: üst formu doldur
+        $(document).on('click', '.reply-btn', function(){
+            var cid = $(this).data('comment-id');
+            var name = $(this).data('reply-to');
+            $('#parent_id').val(cid);
+            $('#replying-to').text('@' + name + ' yorumuna yanıt veriyorsunuz');
 
+            // Yanıt bağlamını ve iptal butonunu göster
+            var replyContext = $('#reply-context');
+            var cancelBtn = $('#cancel-reply');
+            replyContext.removeClass('reply-context-hidden').addClass('reply-context-visible');
+            cancelBtn.removeClass('reply-context-hidden').addClass('reply-context-visible');
+
+            var ta = $('#comment');
+            // mention ekle (tekrar eklemeyi önle)
+            var mention = '@' + name + ' ';
+            if(ta.val().indexOf(mention) !== 0){ ta.val(mention + ta.val()); }
+            ta.focus();
+            // forma kaydır
+            $('html, body').animate({ scrollTop: $('#main-comment-form').offset().top - 80 }, 200);
+        });
+
+        // İptal: parent_id ve mention temizle
+        $(document).on('click', '#cancel-reply', function(){
+            $('#parent_id').val('');
+            var replyContext = $('#reply-context');
+            var cancelBtn = $('#cancel-reply');
+            replyContext.removeClass('reply-context-visible').addClass('reply-context-hidden');
+            cancelBtn.removeClass('reply-context-visible').addClass('reply-context-hidden');
+            var val = $('#comment').val();
+            $('#comment').val(val.replace(/^@[^ 0-\s]+\s+/,''));
+        });
+
+        // Beğeni butonu (FontAwesome 6 far/fas)
+        $(document).on('click', '.like-btn', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            if (btn.prop('disabled')) return;
+            btn.prop('disabled', true);
+            var commentId = btn.data('comment-id');
+            var icon = btn.find('.like-icon');
+            var countSpan = btn.find('.like-count');
+            var labelSpan = btn.find('.like-label');
+            $.post('/like-comment/' + commentId, function(resp) {
+                if(resp && resp.success) {
+                    countSpan.text(resp.likeCount);
+                    if(resp.isLiked) {
+                        icon.removeClass('far').addClass('fas').css('color', '#e0245e');
+                        btn.addClass('liked');
+                    } else {
+                        icon.removeClass('fas').addClass('far').css('color', '');
+                        btn.removeClass('liked');
+                    }
+                    if(resp.likeCount > 0) { labelSpan.text(' beğeni'); } else { labelSpan.text('Beğen'); }
+                } else {
+                    alert('Beğeni işlemi başarısız oldu.');
+                }
+            }).fail(function(){
+                alert('Beğeni işlemi başarısız oldu.');
+            }).always(function(){
+                btn.prop('disabled', false);
+            });
+        });
+        // Yanıtları aç/kapa (butona tıklayınca)
+        $(document).on('click', '.toggle-replies-btn', function(){
+            var targetId = $(this).data('target');
+            var container = $('#' + targetId);
+            if(container.length){ container.slideToggle(150); }
+        });
+    } else {
+        setTimeout(arguments.callee, 50);
+    }
+})();
 </script>
+
+<style>
+    .reply-context-hidden {
+        display: none !important;
+    }
+
+    .reply-context-visible {
+        display: flex !important;
+    }
+
+    .modern-cancel-btn {
+        background: linear-gradient(90deg, #e57373, #f06292);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 18px;
+        font-size: 0.95rem;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(230,115,115,0.07);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        margin-bottom: 0;
+        cursor: pointer;
+    }
+    .modern-cancel-btn:hover {
+        background: linear-gradient(90deg, #f06292, #e57373);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(240,98,146,0.15);
+    }
+    .modern-submit-btn {
+        background: linear-gradient(90deg, #7b5e57, #cbb682);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 24px;
+        font-size: 1rem;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        font-weight: 500;
+        min-width: 120px;
+        box-shadow: 0 2px 8px rgba(123,94,87,0.07);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .modern-submit-btn:hover {
+        background: linear-gradient(90deg, #a1866f, #7b5e57);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(203,182,130,0.15);
+    }
+    #comment-form-actions { width: 100%; }
+</style>
 {{ end }}

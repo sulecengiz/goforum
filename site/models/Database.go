@@ -13,6 +13,8 @@ func ConnectDB() {
 	if err != nil {
 		panic("Veritabanına bağlanılamadı: " + err.Error())
 	}
+	// Otomatik migration
+	DB.AutoMigrate(&SavedPost{})
 }
 
 func GetDB() *gorm.DB {

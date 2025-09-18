@@ -1,39 +1,46 @@
 package models
 
 import (
-	"fmt"
+	"gorm.io/gorm"
 	"time"
 )
 
-type ContactForm struct {
-	// gorm.Model kaldırmadan bırakılabilir ama zaten import edilmiyor burada
-	ID                          uint `gorm:"primaryKey"`
-	Name, Email, Phone, Message string
-	CreatedAt                   string
+type Contact struct {
+	ID        uint           `json:"id" gorm:"primaryKey"`
+	Name      string         `json:"name" gorm:"not null"`
+	Email     string         `json:"email" gorm:"not null"`
+	Subject   string         `json:"subject" gorm:"not null"`
+	Message   string         `json:"message" gorm:"type:text;not null"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (c ContactForm) Migrate() { GetDB().AutoMigrate(&c) }
-
-func (c ContactForm) Add() error {
-	db := GetDB()
-	c.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
-	if err := db.Create(&c).Error; err != nil {
-		fmt.Println("Contact create hata", err)
-		return err
-	}
-	return nil
+// Migrate - Contact tablosunu oluşturma/güncelleme
+func (c Contact) Migrate() {
+	GetDB().AutoMigrate(&Contact{})
 }
 
-func (c ContactForm) GetAll(where ...interface{}) []ContactForm {
-	var contacts []ContactForm
-	GetDB().Order("created_at DESC").Find(&contacts, where...)
+// Save - İletişim formunu kaydetme
+func (c *Contact) Save() error {
+	return GetDB().Create(c).Error
+}
+
+// GetAll - Tüm iletişim formlarını getirme
+func (c Contact) GetAll() []Contact {
+	var contacts []Contact
+	GetDB().Order("created_at DESC").Find(&contacts)
 	return contacts
 }
 
-func (c ContactForm) Get(id interface{}) (ContactForm, error) {
-	db := GetDB()
-	result := db.First(&c, id)
-	return c, result.Error
+// Get - ID'ye göre iletişim formu getirme
+func (c Contact) Get(id uint) Contact {
+	var contact Contact
+	GetDB().First(&contact, id)
+	return contact
 }
 
-func (c ContactForm) Delete() error { return GetDB().Delete(&c).Error }
+// Delete - İletişim formunu silme
+func (c Contact) Delete(id uint) error {
+	return GetDB().Delete(&Contact{}, id).Error
+}

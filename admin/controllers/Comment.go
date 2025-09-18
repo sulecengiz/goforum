@@ -166,7 +166,8 @@ func (c Comment) Delete(w http.ResponseWriter, r *http.Request, params httproute
 		return
 	}
 
-	deleteErr := models.Comment{}.Delete(cid)
+	comment := &models.Comment{}
+	deleteErr := comment.DeleteComment(int(cid))
 	if deleteErr != nil {
 		helpers.SetAlert(w, r, "Yorum silinirken hata")
 	} else {

@@ -57,6 +57,48 @@
     hr {
         margin: 0 0 12px 0;
     }
+    /* Kategori kartları için yeni stiller */
+    .category-card {
+        background: linear-gradient(135deg, rgba(245, 233, 218, 0.73) 0%, rgba(255, 237, 217, 0.82) 100%);
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(68, 84, 158, 0.08);
+        padding: 18px 16px 14px 16px;
+        margin-bottom: 14px;
+        transition: transform 0.18s, box-shadow 0.18s;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .category-card:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 8px 24px rgba(68, 84, 158, 0.16);
+        background: linear-gradient(135deg, #e9e4f0 0%, #f5e9da 100%);
+    }
+    .category-icon {
+        font-size: 1.4rem;
+        color: rgba(138, 109, 59, 0.85);
+        margin-right: 8px;
+    }
+    .category-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #685a5a;
+        margin-bottom: 0;
+        text-decoration: none;
+    }
+    .category-title:hover {
+        color: #8a6d3b;
+    }
+    .category-badge {
+        background: rgba(138, 109, 59, 0.85);
+        color: #fff;
+        font-size: 0.85rem;
+        border-radius: 12px;
+        padding: 4px 12px;
+        margin-left: auto;
+    }
 </style>
 <!-- Page Header-->
 <header class="masthead" style="background-image: url('/assets/assets/img/home-bg.jpeg')">
@@ -76,25 +118,34 @@
 <div class="px-5 mb-5">
   <div class="row">
       <div class="col-lg-4 col-md-2 mx-auto">
-      <header class="mx-2 my-4">
-          <i class="fa fa-list-ul"></i>
-            <span class="h4"> Kategoriler</span>
+      <header class="category-header w-75  my-4 d-flex align-items-center gap-2 p-3 mb-3 shadow-sm rounded-3 bg-white"
+              style="background: linear-gradient(90deg, rgba(255,225,198,0.72) 0%, #fffae6 100%); border-left: 6px solid #8a6d3b; border-bottom-left-radius: 20px; border-top-right-radius: 20px;">
+          <i class="fa fa-list-ul" style="font-size:1.5rem; color:#8a6d3b;"></i>
+          <span class="h4 mb-0 ml-2" style="letter-spacing:1px; color:#685a5a; font-weight: 600; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Kategoriler</span>
       </header>
-
-      <ul class="list-group list-group-flush w-50">
-          {{ range $index, $value := .Categories }}
-          <li class="list-group-item d-flex justify-content-between align-items-center {{ if and $.ActiveCategory (eq $.ActiveCategory.ID $value.ID) }}active1{{ end }}">
-              <a href="/kategori/{{ $value.Slug }}">{{ $value.Title }}</a>
-              <span class="badge badge-primary badge-pill" style="background-color: rgba(138,109,59,0.82)">{{ index $.totalCategoryPosts $value.Title }}</span>
-          </li>
-          {{ end }}
-      </ul>
+      <div class="row">
+        {{ range $index, $value := .Categories }}
+        <div class="col-12 mb-2 ">
+          <div class="category-card w-75 {{ if and $.ActiveCategory (eq $.ActiveCategory.ID $value.ID) }}active1{{ end }}">
+            <i class="fa fa-folder-open category-icon"></i>
+            <a href="/kategori/{{ $value.Slug }}" class="category-title">{{ $value.Title }}</a>
+            <span class="category-badge">{{ index $.totalCategoryPosts $value.Title }}</span>
+          </div>
+        </div>
+        {{ end }}
+      </div>
       </div>
 
       <div class="col-lg-8 col-md-10 mx-auto">
       {{ range $index,$value := .Posts }}
       {{ $author := getUser $value.AuthorID }}
-      <div class="post-preview">
+      <div class="post-preview position-relative">
+        <!-- Kaydet (star) ikonu sağ üstte -->
+        {{ if $.User }}
+        <span class="save-star" data-postid="{{ $value.ID }}" style="position:absolute;top:8px;right:8px;cursor:pointer;z-index:10;">
+          <i class="fa fa-star{{ if not (inSlice $.SavedPostIDs $value.ID) }}-o{{ end }}" style="font-size:1.5rem;color:{{ if (inSlice $.SavedPostIDs $value.ID) }}#FFD700{{ else }}#bbb{{ end }};"></i>
+        </span>
+        {{ end }}
         <a href="/yazilar/{{ $value.Slug }}">
           <h2 class="post-title">{{ $value.Title }}</h2>
           <h3 class="post-subtitle">{{ $value.Description }}</h3>
@@ -117,4 +168,33 @@
     </div>
   </div>
 </div>
+<script>
+// Star ikonuna tıklama işlemi
+$(document).on('click', '.save-star', function(e) {
+  e.preventDefault();
+  var star = $(this).find('i');
+  var postId = $(this).data('postid');
+  var isSaved = star.hasClass('fa-star') && !star.hasClass('fa-star-o');
+  var url = isSaved ? '/unsave-post/' + postId : '/save-post/' + postId;
+
+  $.post(url, function(resp) {
+    // API response'u JSON formatında gelir
+    if(resp.success) {
+      if(isSaved) {
+        // Post kaydını kaldır
+        star.removeClass('fa-star').addClass('fa-star-o').css('color', '#bbb');
+      } else {
+        // Postu kaydet
+        star.removeClass('fa-star-o').addClass('fa-star').css('color', '#FFD700');
+      }
+    } else {
+      console.error('Kaydetme işlemi başarısız:', resp.message);
+      alert('İşlem başarısız: ' + (resp.message || 'Bilinmeyen hata'));
+    }
+  }).fail(function(xhr, status, error) {
+    console.error('AJAX hatası:', error);
+    alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+  });
+});
+</script>
 {{ end }}

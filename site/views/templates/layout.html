@@ -52,62 +52,257 @@
         }
 
         .coffee-nav .dropdown-item {
-            color:#f5deb3;
+            color:#f5deb3 !important;
         }
 
         .coffee-nav .dropdown-item:hover {
-            background:#7b5e57;
-            color:#fff;
+            background-color:#7b5e57 !important;
+            color:#ffe3b3 !important;
         }
 
-        /* Sağ panel & buton gradient */
-        .gradient-custom-2 {
-            background: linear-gradient(135deg,#4b3832 0%, #7b5e57 50%, #a1866f 100%);
-            background-size:200% 200%;
-            animation:shimmer 8s linear infinite;
-            color:#fff;
+        /* Masthead */
+        .masthead {
+            background: no-repeat center center;
+            background-color: #6c757d;
+            background-attachment: scroll;
+            position: relative;
+            background-size: cover;
         }
 
-        .btn.gradient-custom-2 {
-            background: linear-gradient(135deg,#4b3832 0%, #7b5e57 50%, #a1866f 100%);
-            border:none;
-            color:#fff;
+        .masthead .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #212529;
+            opacity: 0.5;
         }
 
-        .btn.gradient-custom-2:hover {
-            filter:brightness(1.1);
+        .masthead .page-heading,
+        .masthead .post-heading,
+        .masthead .site-heading {
+            color: #fff;
+            padding: 200px 0 150px;
         }
 
-        @keyframes shimmer {
-            0%{background-position:0% 50%}
-            50%{background-position:100% 50%}
-            100%{background-position:0% 50%}
+        @media (max-width: 991.98px) {
+            .masthead .page-heading,
+            .masthead .post-heading,
+            .masthead .site-heading {
+                padding: 150px 0 100px;
+            }
         }
 
-        /* Kart köşe düzeni */
-        .gradient-form .card .gradient-custom-2 {
-            border-top-right-radius:.3rem;
-            border-bottom-right-radius:.3rem;
+        .masthead .page-heading h1,
+        .masthead .post-heading h1,
+        .masthead .site-heading h1 {
+            font-size: 3rem;
         }
 
-        .gradient-form .card .col-lg-6:first-child {
-            border-top-left-radius:.3rem;
-            border-bottom-left-radius:.3rem;
+        .masthead .page-heading .subheading,
+        .masthead .post-heading .subheading {
+            font-size: 1.1rem;
+            line-height: 1.1;
+            display: block;
+            font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            margin: 10px 0 0;
         }
 
-        nav#mainNav {
+        .masthead .site-heading .subheading {
+            font-size: 1.5rem;
+            line-height: 1.1;
+            display: block;
+            font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            margin: 10px 0 0;
+        }
+
+        @media (max-width: 991.98px) {
+            .masthead .page-heading h1,
+            .masthead .post-heading h1,
+            .masthead .site-heading h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .masthead .page-heading .meta,
+        .masthead .post-heading .meta {
+            font-size: 1.25rem;
+            font-weight: 300;
+            font-style: italic;
+            font-family: 'Lora', 'Times New Roman', serif;
+            color: #6c757d;
+        }
+
+        @media (max-width: 991.98px) {
+            .masthead .page-heading .meta,
+            .masthead .post-heading .meta {
+                font-size: 1.125rem;
+            }
+        }
+
+        /* Post preview */
+        .post-preview > a {
+            color: #212529;
+            text-decoration: none;
+        }
+
+        .post-preview > a:focus,
+        .post-preview > a:hover {
+            text-decoration: none;
+            color: #0085A1;
+        }
+
+        .post-preview > a > .post-title {
+            font-size: 1.875rem;
+            line-height: 1.1;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .post-preview > a > .post-subtitle {
+            font-weight: 300;
+            margin: 0 0 10px;
+        }
+
+        .post-preview > .post-meta {
+            font-size: 1.125rem;
+            font-style: italic;
+            margin-top: 0;
+            color: #6c757d;
+        }
+
+        .post-preview > .post-meta > a {
+            color: #212529;
+            text-decoration: none;
+        }
+
+        .post-preview > .post-meta > a:focus,
+        .post-preview > .post-meta > a:hover {
+            color: #0085A1;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 991.98px) {
+            .post-preview > a > .post-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Floating label form controls */
+        .floating-label-form-group {
+            font-size: 0.875rem;
+            position: relative;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .floating-label-form-group input,
+        .floating-label-form-group textarea {
+            font-size: 1.5rem;
+            position: relative;
+            z-index: 1;
+            padding: 0;
+            resize: none;
+            border: none;
+            border-radius: 0;
+            background: none;
+            box-shadow: none !important;
+            font-family: 'Lora', 'Times New Roman', serif;
+        }
+
+        .floating-label-form-group input::-webkit-input-placeholder,
+        .floating-label-form-group textarea::-webkit-input-placeholder {
+            color: #6c757d;
+            font-family: 'Lora', 'Times New Roman', serif;
+        }
+
+        .floating-label-form-group label {
+            font-size: 0.875rem;
+            line-height: 1.875rem;
+            position: relative;
+            z-index: 0;
+            top: 2rem;
+            display: block;
+            margin: 0;
+            transition: top 0.3s ease, opacity 0.3s ease;
+            vertical-align: middle;
+            vertical-align: baseline;
+            opacity: 0;
+        }
+
+        .floating-label-form-group .help-block {
+            margin: 15px 0;
+        }
+
+        .floating-label-form-group-with-value label {
+            top: 0;
+            opacity: 1;
+        }
+
+        .floating-label-form-group-with-focus label {
+            color: #0085A1;
+        }
+
+        form .row:first-child .floating-label-form-group {
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 0 65px;
+        }
+
+        footer .list-inline {
+            margin: 0;
+            padding: 0;
+        }
+
+        footer .copyright {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+            text-align: center;
+        }
+
+        /* Button modifications */
+        .btn {
+            font-size: 0.875rem;
+            font-weight: 800;
+            padding: 15px 25px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 0;
+            font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        .btn-primary {
+            background-color: #0085A1;
+            border-color: #0085A1;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus,
+        .btn-primary:active {
+            color: #fff;
+            background-color: #00657b !important;
+            border-color: #00657b !important;
+        }
+
+        .btn-lg {
+            font-size: 1rem;
+            padding: 25px 35px;
         }
     </style>
 </head>
-<body class="{{ if .BodyClass }}{{ .BodyClass }}{{ end }}">
-{{ template "navbar" . }}
-<main class="mt-5 pt-4">
+<body>
+    {{ template "navbar" . }}
+
     {{ template "content" . }}
-</main>
-<!-- Inline Scripts (scripts.html kaldırılabilir veya opsiyonel bırakılabilir) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/scripts.js"></script>
-<script> if (typeof window.jQuery === 'undefined') { console.error('jQuery yüklenemedi'); } </script>
+
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 {{ end }}
