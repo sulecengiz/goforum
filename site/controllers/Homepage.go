@@ -48,6 +48,19 @@ func siteFuncMap() template.FuncMap {
 		},
 		"getUser": func(userID uint) models.User { return models.User{}.Get(userID) },
 		"isAdmin": func(userID uint) bool { return userID == 1 }, // Admin kontrolü
+		"sub":     func(a, b int) int { return a - b },
+		"lt":      func(a, b int) bool { return a < b },
+		"gt":      func(a, b int) bool { return a > b },
+		"len": func(slice interface{}) int {
+			switch v := slice.(type) {
+			case []models.Post:
+				return len(v)
+			case []models.SavedPost:
+				return len(v)
+			default:
+				return 0
+			}
+		},
 	}
 }
 
@@ -711,7 +724,7 @@ func (homepage Homepage) CreatePost(w http.ResponseWriter, r *http.Request, _ ht
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
 		log.Printf("ParseMultipartForm hatası: %v", err)
 	}
-	file, header, err := r.FormFile("blog-picture")
+	file, header, err := r.FormFile("forum-picture")
 	if err != nil {
 		// Fotoğraf yüklenmemişse varsayılan resim kullan
 		picture_url = ""
@@ -842,7 +855,7 @@ func (homepage Homepage) UpdatePost(w http.ResponseWriter, r *http.Request, para
 
 	// Resim (opsiyonel)
 	pictureURL := existingPost.Picture_url
-	if file, header, ferr := r.FormFile("blog-picture"); ferr == nil {
+	if file, header, ferr := r.FormFile("forum-picture"); ferr == nil {
 		if closeErr := file.Close(); closeErr != nil {
 			log.Printf("File close hatası: %v", closeErr)
 		}
@@ -953,5 +966,38 @@ func (homepage Homepage) ToggleLike(w http.ResponseWriter, r *http.Request, para
 	likeCount := models.Like{}.GetLikeCount(commentID)
 	if _, writeErr := w.Write([]byte(fmt.Sprintf(`{"success":true,"likeCount":%d,"isLiked":%t}`, likeCount, isLiked))); writeErr != nil {
 		log.Printf("Write error: %v", writeErr)
+	}
+}
+
+// GetSavedPosts - Kullanıcının kaydettiği blogları listele
+func (homepage Homepage) GetSavedPosts(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	// Kullanıcının giriş yapıp yapmadığını kontrol et
+	user, err := helpers.GetCurrentUser(r)
+	if err != nil || user == nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Kullanıcının kaydettiği postları getir
+	savedPostModel := models.SavedPost{}
+	savedPosts := savedPostModel.GetSavedPostsByUser(user.ID)
+
+	// Template dosyalarını yükle
+	view, err := loadSiteTemplates("layout", "site/views/profile/saved-posts.html")
+	if err != nil {
+		log.Printf("Template parse hatası: %v", err)
+		http.Error(w, "Template hatası", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"Title":      "Kaydedilen Bloglar",
+		"User":       user,
+		"SavedPosts": savedPosts,
+	}
+
+	if err = view.ExecuteTemplate(w, "layout", data); err != nil {
+		log.Printf("Template execute hatası: %v", err)
+		http.Error(w, "Template hatası", http.StatusInternalServerError)
 	}
 }

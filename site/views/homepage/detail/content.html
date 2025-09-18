@@ -181,6 +181,35 @@
             var container = $('#' + targetId);
             if(container.length){ container.slideToggle(150); }
         });
+
+        // Blog kaydetme/kaldırma (star ikonu)
+        $(document).on('click', '.save-star', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            var postId = btn.data('postid');
+            var icon = btn.find('i');
+
+            if (btn.prop('disabled')) return;
+            btn.prop('disabled', true);
+
+            $.post('/save-post/' + postId, function(response) {
+                if (response.success) {
+                    if (response.isSaved) {
+                        // Blog kaydedildi - dolu yıldız yap
+                        icon.removeClass('fa-regular').addClass('fa-solid').css('color', '#FFD700');
+                    } else {
+                        // Blog kayıttan kaldırıldı - boş yıldız yap
+                        icon.removeClass('fa-solid').addClass('fa-regular').css('color', '#bbb');
+                    }
+                } else {
+                    alert('Bir hata oluştu: ' + (response.message || 'Bilinmeyen hata'));
+                }
+            }).fail(function() {
+                alert('Sunucu hatası oluştu. Lütfen tekrar deneyin.');
+            }).always(function() {
+                btn.prop('disabled', false);
+            });
+        });
     } else {
         setTimeout(arguments.callee, 50);
     }

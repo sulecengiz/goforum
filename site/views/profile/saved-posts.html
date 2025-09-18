@@ -1,0 +1,123 @@
+{{ define "content" }}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Kaydedilen Forumlar</h2>
+                <a href="/profile" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Profile Dön
+                </a>
+            </div>
+
+            {{ if .SavedPosts }}
+                <div class="row">
+                    {{ range .SavedPosts }}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            {{ if .Post.Picture_url }}
+                            <img src="/{{ .Post.Picture_url }}" class="card-img-top" alt="{{ .Post.Title }}" style="height: 200px; object-fit: cover;">
+                            {{ else }}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                            {{ end }}
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">
+                                    <a href="/yazilar/{{ .Post.Slug }}" class="text-decoration-none text-dark">
+                                        {{ .Post.Title }}
+                                    </a>
+                                </h5>
+
+                                <p class="card-text text-muted flex-grow-1">
+                                    {{ if .Post.Description }}
+                                        {{ .Post.Description }}
+                                    {{ else }}
+                                        {{ substr .Post.Content 0 150 }}...
+                                    {{ end }}
+                                </p>
+
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar"></i>
+                                        {{ .CreatedAt.Format "02.01.2006" }} tarihinde kaydedildi
+                                    </small>
+
+                                    <div class="btn-group">
+                                        <a href="/yazilar/{{ .Post.Slug }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Oku
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger unsave-btn" data-postid="{{ .Post.ID }}">
+                                            <i class="fas fa-trash"></i> Kaldır
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ end }}
+                </div>
+            {{ else }}
+                <div class="text-center py-5">
+                    <i class="fas fa-bookmark fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Henüz kaydetilmiş forum yazısı yok</h4>
+                    <p class="text-muted">Beğendiğiniz forum yazılarını kaydetmek için yazı sayfalarında ⭐ ikonuna tıklayın.</p>
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Ana Sayfaya Dön
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Kayıttan kaldırma butonu
+    $('.unsave-btn').on('click', function() {
+        var btn = $(this);
+        var postId = btn.data('postid');
+        var card = btn.closest('.col-md-6');
+
+        if (confirm('Bu blogu kayıtlarınızdan kaldırmak istediğinizden emin misiniz?')) {
+            btn.prop('disabled', true);
+
+            $.post('/save-post/' + postId, function(response) {
+                if (response.success) {
+                    // Kartı yumuşak bir şekilde kaldır
+                    card.fadeOut(300, function() {
+                        card.remove();
+
+                        // Eğer hiç kart kalmadıysa boş mesajı göster
+                        if ($('.col-md-6').length === 0) {
+                            location.reload();
+                        }
+                    });
+                } else {
+                    alert('Bir hata oluştu: ' + (response.message || 'Bilinmeyen hata'));
+                    btn.prop('disabled', false);
+                }
+            }).fail(function() {
+                alert('Sunucu hatası oluştu. Lütfen tekrar deneyin.');
+                btn.prop('disabled', false);
+            });
+        }
+    });
+});
+</script>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.unsave-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+</style>
+{{ end }}

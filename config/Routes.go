@@ -50,7 +50,7 @@ func Routes() *httprouter.Router {
 	// SavedPost (blog kaydetme) işlemleri
 	r.POST("/save-post/:postID", site.SavePost)
 	r.POST("/unsave-post/:postID", site.UnsavePost)
-	r.GET("/saved-posts", site.GetSavedPosts)
+	r.GET("/saved-posts", site.Homepage{}.GetSavedPosts)
 
 	// Admin Routes
 	r.GET("/admin/login", admin.Userops{}.Index)

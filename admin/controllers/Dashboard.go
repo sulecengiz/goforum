@@ -81,15 +81,15 @@ func (dashboard Dashboard) Add(w http.ResponseWriter, r *http.Request, params ht
 		return
 	}
 
-	title := r.FormValue("blog-title")
+	title := r.FormValue("forum-title")
 	slug := slug.Make(title)
-	description := r.FormValue("blog-desc")
-	categoryID, _ := strconv.Atoi(r.FormValue("blog-category"))
-	content := r.FormValue("blog-content")
+	description := r.FormValue("forum-desc")
+	categoryID, _ := strconv.Atoi(r.FormValue("forum-category"))
+	content := r.FormValue("forum-content")
 
 	//Upload
 	r.ParseMultipartForm(10 << 20)
-	file, header, err := r.FormFile("blog-picture")
+	file, header, err := r.FormFile("forum-picture")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -159,18 +159,18 @@ func (dashboard Dashboard) Update(w http.ResponseWriter, r *http.Request, params
 	}
 
 	post := models.Post{}.Get(params.ByName("id"))
-	title := r.FormValue("blog-title")
+	title := r.FormValue("forum-title")
 	slug := slug.Make(title)
-	description := r.FormValue("blog-desc")
-	categoryID, _ := strconv.Atoi(r.FormValue("blog-category"))
-	content := r.FormValue("blog-content")
+	description := r.FormValue("forum-desc")
+	categoryID, _ := strconv.Atoi(r.FormValue("forum-category"))
+	content := r.FormValue("forum-content")
 	is_selected := r.FormValue("is_selected")
 	var picture_url string
 
 	if is_selected == "1" {
 		//Upload
 		r.ParseMultipartForm(10 << 20)
-		file, header, err := r.FormFile("blog-picture")
+		file, header, err := r.FormFile("forum-picture")
 		if err != nil {
 			fmt.Println(err)
 			return
