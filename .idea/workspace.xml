@@ -4,31 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="yıldız eklemeden önceki son hal">
-      <change afterPath="$PROJECT_DIR$/site/views/profile/saved-posts.html" afterDir="false" />
+    <list default="true" id="921a6446-d8b4-4579-b510-05f873bfc408" name="Changes" comment="kaydetme özelliği eklendi, isimler değişti">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/controllers/Dashboard.go" beforeDir="false" afterPath="$PROJECT_DIR$/admin/controllers/Dashboard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/categories/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/categories/list/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/dashboard/add/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/dashboard/add/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/dashboard/edit/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/dashboard/edit/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/dashboard/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/dashboard/list/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/templates/auth_footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/auth_footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/templates/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/head.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/views/templates/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/admin/views/templates/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/Routes.go" beforeDir="false" afterPath="$PROJECT_DIR$/config/Routes.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/goforum.db" beforeDir="false" afterPath="$PROJECT_DIR$/goforum.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/controllers/Homepage.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/controllers/Homepage.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/controllers/SavedPost_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/controllers/SavedPost_controller.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/models/SavedPost.go" beforeDir="false" afterPath="$PROJECT_DIR$/site/models/SavedPost.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/about/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/about/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/homepage/detail/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/detail/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/homepage/list/content.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/homepage/list/content.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/profile/edit-post.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/edit-post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/profile/new-post.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/new-post.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/profile/profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/profile/profile.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/site/views/templates/footer.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/footer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/views/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/site/views/templates/navbar.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,7 +132,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="15 eylül" />
     <MESSAGE value="yıldız eklemeden önceki son hal" />
-    <option name="LAST_COMMIT_MESSAGE" value="yıldız eklemeden önceki son hal" />
+    <MESSAGE value="kaydetme özelliği eklendi, isimler değişti" />
+    <option name="LAST_COMMIT_MESSAGE" value="kaydetme özelliği eklendi, isimler değişti" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
